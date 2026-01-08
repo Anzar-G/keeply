@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2 } from 'lucide-react';
+import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone } from 'lucide-react';
 
-function ContactList({ contacts, onEdit, onDelete, onBulkDelete }) {
+function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin }) {
     const [selectedIds, setSelectedIds] = useState([]);
 
     const allSelected = contacts.length > 0 && selectedIds.length === contacts.length;
@@ -37,7 +37,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete }) {
             headers.join(','),
             ...selectedContacts.map(contact => [
                 contact.name,
-                contact.email,
+                isAdmin ? contact.email : '••••••••@••••.•••',
                 contact.phone || '',
                 contact.company || '',
                 contact.position || '',
@@ -123,9 +123,17 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete }) {
                                                     {contact.name}
                                                     {isSelected && <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>}
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                                                    <Mail size={12} className="text-slate-300" />
-                                                    {contact.email}
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                                                        <Mail size={12} className="text-slate-300" />
+                                                        {isAdmin ? contact.email : '••••••••@••••.•••'}
+                                                    </div>
+                                                    {contact.phone && (
+                                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                                                            <Phone size={12} className="text-slate-200" />
+                                                            {contact.phone}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -189,14 +197,14 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete }) {
 
             {/* Bulk Action Floating Bar */}
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom-8 duration-500">
-                    <div className="bg-slate-900 border border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-3xl px-8 py-5 flex items-center gap-10">
+                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-500">
+                    <div className="bg-slate-900 border border-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] rounded-[2rem] px-10 py-5 flex items-center gap-12 backdrop-blur-md bg-slate-900/95">
                         <div className="flex items-center gap-4">
-                            <div className="bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-6 w-6 flex items-center justify-center shadow-lg shadow-indigo-900/50">
+                            <div className="bg-indigo-600 text-white text-[10px] font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                                 {selectedIds.length}
                             </div>
-                            <span className="text-sm font-bold text-white tracking-tight">
-                                {selectedIds.length} Selected
+                            <span className="text-xs font-extrabold text-white tracking-widest uppercase">
+                                {selectedIds.length} ENTRIES SELECTED
                             </span>
                         </div>
 

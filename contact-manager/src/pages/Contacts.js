@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ContactList from '../components/ContactList';
 import ContactForm from '../components/ContactForm';
-import { Plus, Search, Loader2, Users, Filter, Download } from 'lucide-react';
+import { Plus, Search, Loader2, Filter, Download } from 'lucide-react';
 import { contactAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { useNotification } from '../context/NotificationContext';
@@ -159,6 +159,7 @@ function Contacts() {
             <div className="premium-card min-h-[400px]">
                 <ContactList
                     contacts={filteredContacts}
+                    isAdmin={isAdmin}
                     onEdit={isAdmin ? (contact) => {
                         setEditingContact(contact);
                         setShowForm(true);
