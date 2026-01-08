@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone } from 'lucide-react';
+import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2 } from 'lucide-react';
 
 function ContactList({ contacts, onEdit, onDelete, onBulkDelete }) {
     const [selectedIds, setSelectedIds] = useState([]);

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { activityAPI } from '../services/api';
 import { User, Calendar, Info, Loader2, Database } from 'lucide-react';
 
