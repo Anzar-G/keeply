@@ -1,6 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, Building2, Briefcase, Tag, FileText, X, Check } from 'lucide-react';
 
+const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", placeholder, error, rows }) => (
+    <div className="space-y-1.5">
+        <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
+            <Icon size={12} className="text-slate-300" />
+            {label}
+            {(label === 'Name' || label === 'Email') && <span className="text-rose-400">*</span>}
+        </label>
+        {rows ? (
+            <textarea
+                name={name}
+                value={value}
+                onChange={onChange}
+                rows={rows}
+                className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-600 placeholder:text-slate-300 shadow-sm ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
+                    }`}
+                placeholder={placeholder}
+            />
+        ) : (
+            <input
+                type={type}
+                name={name}
+                value={value}
+                onChange={onChange}
+                className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-600 placeholder:text-slate-300 shadow-sm ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
+                    }`}
+                placeholder={placeholder}
+            />
+        )}
+        {error && <p className="text-rose-500 text-[10px] font-bold px-1 italic">{error}</p>}
+    </div>
+);
+
 function ContactForm({ contact, onSubmit, onCancel }) {
     const [formData, setFormData] = useState({
         name: '',
@@ -14,7 +46,6 @@ function ContactForm({ contact, onSubmit, onCancel }) {
 
     const [errors, setErrors] = useState({});
 
-    // Fill form if editing
     useEffect(() => {
         if (contact) {
             setFormData({
@@ -32,7 +63,6 @@ function ContactForm({ contact, onSubmit, onCancel }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        // Clear error when typing
         if (errors[name]) {
             setErrors((prev) => ({ ...prev, [name]: '' }));
         }
@@ -40,24 +70,18 @@ function ContactForm({ contact, onSubmit, onCancel }) {
 
     const validate = () => {
         const newErrors = {};
-
-        if (!formData.name.trim()) {
-            newErrors.name = 'Full name is required';
-        }
-
+        if (!formData.name.trim()) newErrors.name = 'Full name is required';
         if (!formData.email.trim()) {
             newErrors.email = 'Email address is required';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Please enter a valid email';
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if (validate()) {
             const dataToSubmit = {
                 ...formData,
@@ -66,61 +90,28 @@ function ContactForm({ contact, onSubmit, onCancel }) {
                     .map((tag) => tag.trim())
                     .filter((tag) => tag !== ''),
             };
-
             onSubmit(dataToSubmit);
         }
     };
 
-    const InputField = ({ label, icon: Icon, name, type = "text", placeholder, error, rows }) => (
-        <div className="space-y-2">
-            <label className="flex items-center gap-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">
-                <Icon size={12} className="text-slate-300" />
-                {label}
-                {label === 'Name' || label === 'Email' ? <span className="text-rose-400">*</span> : null}
-            </label>
-            {rows ? (
-                <textarea
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    rows={rows}
-                    className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-700 placeholder:text-slate-300 shadow-inner ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
-                        }`}
-                    placeholder={placeholder}
-                />
-            ) : (
-                <input
-                    type={type}
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-700 placeholder:text-slate-300 shadow-inner ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
-                        }`}
-                    placeholder={placeholder}
-                />
-            )}
-            {error && <p className="text-rose-500 text-[10px] font-bold px-1 italic">{error}</p>}
-        </div>
-    );
-
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Name" icon={User} name="name" placeholder="E.g. Alexander Pierce" error={errors.name} />
-                <InputField label="Email" icon={Mail} name="email" type="email" placeholder="alex@company.com" error={errors.email} />
-                <InputField label="Phone" icon={Phone} name="phone" placeholder="+1 (555) 000-0000" />
-                <InputField label="Company" icon={Building2} name="company" placeholder="Acme Corp" />
-                <InputField label="Position" icon={Briefcase} name="position" placeholder="Systems Architect" />
-                <InputField label="Tags" icon={Tag} name="tags" placeholder="VIP, Engineering, Lead (comma separated)" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <InputField label="Name" icon={User} name="name" value={formData.name} onChange={handleChange} placeholder="E.g. Alexander Pierce" error={errors.name} />
+                <InputField label="Email" icon={Mail} name="email" value={formData.email} onChange={handleChange} type="email" placeholder="alex@company.com" error={errors.email} />
+                <InputField label="Phone" icon={Phone} name="phone" value={formData.phone} onChange={handleChange} placeholder="+1 (555) 000-0000" />
+                <InputField label="Company" icon={Building2} name="company" value={formData.company} onChange={handleChange} placeholder="Acme Corp" />
+                <InputField label="Position" icon={Briefcase} name="position" value={formData.position} onChange={handleChange} placeholder="Systems Architect" />
+                <InputField label="Tags" icon={Tag} name="tags" value={formData.tags} onChange={handleChange} placeholder="VIP, Engineering, Lead" />
             </div>
 
-            <InputField label="Additional Notes" icon={FileText} name="notes" placeholder="Any relevant details about this contact..." rows={4} />
+            <InputField label="Additional Notes" icon={FileText} name="notes" value={formData.notes} onChange={handleChange} placeholder="Any relevant details about this contact..." rows={4} />
 
             <div className="flex justify-end items-center gap-4 pt-4 border-t border-slate-50">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex items-center gap-2 px-6 py-3 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
+                    className="flex items-center gap-2 px-6 py-2.5 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
                 >
                     <X size={18} />
                     Discard Changes
