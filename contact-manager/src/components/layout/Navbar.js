@@ -101,30 +101,41 @@ function Navbar({ toggleSidebar, isMobile }) {
                     )}
                 </div>
 
-                <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-                    <div className="text-right hidden md:block">
-                        <div className="flex items-center gap-2 justify-end">
-                            <p className="text-sm font-medium text-gray-900">{user?.username || 'User'}</p>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${user?.role === 'admin'
+                {user ? (
+                    <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+                        <div className="text-right hidden md:block">
+                            <div className="flex items-center gap-2 justify-end">
+                                <p className="text-sm font-medium text-gray-900">{user?.username || 'User'}</p>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${user?.role === 'admin'
                                     ? 'bg-blue-100 text-blue-700'
                                     : 'bg-gray-100 text-gray-700'
-                                }`}>
-                                {user?.role || 'viewer'}
-                            </span>
+                                    }`}>
+                                    {user?.role || 'viewer'}
+                                </span>
+                            </div>
+                            <p className="text-xs text-gray-500">{user?.email || 'user@example.com'}</p>
                         </div>
-                        <p className="text-xs text-gray-500">{user?.email || 'user@example.com'}</p>
+                        <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center border border-blue-200">
+                            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'User'}`} alt="User" className="w-full h-full rounded-full" />
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 hover:bg-red-50 rounded-lg text-gray-600 hover:text-red-600 transition-colors"
+                            title="Logout"
+                        >
+                            <LogOut size={18} />
+                        </button>
                     </div>
-                    <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center border border-blue-200">
-                        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'User'}`} alt="User" className="w-full h-full rounded-full" />
+                ) : (
+                    <div className="pl-4 border-l border-gray-200">
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                        >
+                            Admin Login
+                        </button>
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="p-2 hover:bg-red-50 rounded-lg text-gray-600 hover:text-red-600 transition-colors"
-                        title="Logout"
-                    >
-                        <LogOut size={18} />
-                    </button>
-                </div>
+                )}
             </div>
         </nav>
     );

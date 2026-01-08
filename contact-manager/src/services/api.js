@@ -64,7 +64,7 @@ export const contactAPI = {
 // Auth API
 export const authAPI = {
     login: async (email, password) => {
-        const response = await axios.post(`${API_URL}/../auth/login`, {
+        const response = await axios.post(`${API_URL}/auth/login`, {
             email,
             password
         });
@@ -72,7 +72,7 @@ export const authAPI = {
     },
 
     register: async (username, email, password, role = 'viewer') => {
-        const response = await axios.post(`${API_URL}/../auth/register`, {
+        const response = await axios.post(`${API_URL}/auth/register`, {
             username,
             email,
             password,
@@ -82,7 +82,7 @@ export const authAPI = {
     },
 
     getCurrentUser: async () => {
-        const response = await api.get('/../auth/me');
+        const response = await api.get('/auth/me');
         return response.data;
     }
 };

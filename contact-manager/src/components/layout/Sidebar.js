@@ -1,8 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, UserCircle, Settings } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
+    const { user } = useAuth();
     return (
         <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-gray-200 bg-white transition-transform md:translate-x-0">
             {/* Logo Area */}
@@ -15,7 +17,7 @@ const Sidebar = () => {
                 </div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation and Bottom Section */}
             <div className="flex flex-col justify-between h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4">
                 <nav className="space-y-1">
                     <NavLink
@@ -27,21 +29,23 @@ const Sidebar = () => {
                             }`
                         }
                     >
-                        <LayoutDashboard size={20} />
-                        Dashboard
-                    </NavLink>
-                    <NavLink
-                        to="/contacts"
-                        className={({ isActive }) =>
-                            `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive
-                                ? 'bg-blue-50 text-blue-600'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`
-                        }
-                    >
                         <Users size={20} />
-                        Contacts
+                        Contact List
                     </NavLink>
+                    {user?.role === 'admin' && (
+                        <NavLink
+                            to="/dashboard"
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive
+                                    ? 'bg-blue-50 text-blue-600'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                }`
+                            }
+                        >
+                            <LayoutDashboard size={20} />
+                            Dashboard
+                        </NavLink>
+                    )}
                 </nav>
 
                 {/* Bottom Section */}

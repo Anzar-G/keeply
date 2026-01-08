@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -16,18 +18,15 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
-    // Load user from token on mount
-    useEffect(() => {
-        if (token) {
-            loadUser();
-        } else {
-            setLoading(false);
-        }
-    }, [token]);
+    const logout = React.useCallback(() => {
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+    }, []);
 
-    const loadUser = async () => {
+    const loadUser = React.useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/auth/me', {
+            const response = await axios.get(`${API_URL}/auth/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUser(response.data);
@@ -37,11 +36,20 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [token, logout]);
 
-    const login = async (email, password) => {
+    // Load user from token on mount
+    useEffect(() => {
+        if (token) {
+            loadUser();
+        } else {
+            setLoading(false);
+        }
+    }, [token, loadUser]);
+
+    const login = React.useCallback(async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/login', {
+            const response = await axios.post(`${API_URL}/auth/login`, {
                 email,
                 password
             });
@@ -59,11 +67,11 @@ export const AuthProvider = ({ children }) => {
                 error: error.response?.data?.error || 'Login failed'
             };
         }
-    };
+    }, []);
 
-    const register = async (username, email, password, role = 'viewer') => {
+    const register = React.useCallback(async (username, email, password, role = 'viewer') => {
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/register', {
+            const response = await axios.post(`${API_URL}/auth/register`, {
                 username,
                 email,
                 password,
@@ -83,13 +91,7 @@ export const AuthProvider = ({ children }) => {
                 error: error.response?.data?.error || 'Registration failed'
             };
         }
-    };
-
-    const logout = () => {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
-    };
+    }, []);
 
     const value = {
         user,
