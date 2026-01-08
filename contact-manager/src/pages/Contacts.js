@@ -1,29 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ContactList from '../components/ContactList';
 import ContactForm from '../components/ContactForm';
 import { Plus, Search, Loader2, Filter, Download } from 'lucide-react';
-import { contactAPI } from '../services/api';
+import { contactAPI, groupAPI } from '../services/api';
+import FilterSidebar from '../components/FilterSidebar';
 import toast from 'react-hot-toast';
 import { useNotification } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
 
 function Contacts() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const groupParam = searchParams.get('group') || '';
+
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [editingContact, setEditingContact] = useState(null);
+    const [showFilters, setShowFilters] = useState(false);
+    const [groups, setGroups] = useState([]);
+    const [activeFilters, setActiveFilters] = useState({
+        group: groupParam,
+        company: '',
+        tag: '',
+        dateFrom: '',
+        dateTo: ''
+    });
+
+    useEffect(() => {
+        if (groupParam !== activeFilters.group) {
+            setActiveFilters(prev => ({ ...prev, group: groupParam }));
+        }
+    }, [groupParam, activeFilters.group]);
+
     const { addNotification } = useNotification();
     const { isAdmin } = useAuth();
 
-    useEffect(() => {
-        loadContacts();
-    }, []);
-
-    const loadContacts = async () => {
+    const loadContacts = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await contactAPI.getAll();
+            const params = {
+                ...activeFilters,
+                search: searchQuery
+            };
+            const data = await contactAPI.getAll(params);
             setContacts(data);
         } catch (error) {
             console.error('Error loading contacts:', error);
@@ -31,7 +52,21 @@ function Contacts() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [activeFilters, searchQuery]);
+
+    const loadGroups = useCallback(async () => {
+        try {
+            const data = await groupAPI.getAll();
+            setGroups(data);
+        } catch (error) {
+            console.error('Error loading groups:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadContacts();
+        loadGroups();
+    }, [loadContacts, loadGroups]);
 
     const handleAddContact = async (formData) => {
         try {
@@ -91,11 +126,6 @@ function Contacts() {
         }
     };
 
-    const filteredContacts = contacts.filter(contact =>
-        contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (contact.company && contact.company.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
 
     if (loading) {
         return (
@@ -143,23 +173,49 @@ function Contacts() {
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                     <input
                         type="text"
-                        placeholder="Search by name, email, or company..."
+                        placeholder="Search name or ID..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-700 placeholder:text-slate-400 shadow-sm"
                     />
                 </div>
-                <button className="btn-secondary flex items-center gap-2 border-slate-200 px-6">
+                <button
+                    onClick={() => setShowFilters(true)}
+                    className={`btn-secondary flex items-center gap-2 border-slate-200 px-6 ${Object.values(activeFilters).some(v => v !== '') ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : ''
+                        }`}
+                >
                     <Filter size={18} />
-                    Filters
+                    {Object.values(activeFilters).some(v => v !== '') ? 'Filters Active' : 'Advanced Filters'}
                 </button>
             </div>
+
+            {/* Filter Sidebar Component */}
+            <FilterSidebar
+                isOpen={showFilters}
+                onClose={() => setShowFilters(false)}
+                filters={activeFilters}
+                groups={groups}
+                onFilterChange={(key, value) => {
+                    setActiveFilters(prev => ({ ...prev, [key]: value }));
+                }}
+                onReset={() => {
+                    setActiveFilters({
+                        group: '',
+                        company: '',
+                        tag: '',
+                        dateFrom: '',
+                        dateTo: ''
+                    });
+                    setSearchParams({});
+                }}
+            />
 
             {/* List Content */}
             <div className="premium-card min-h-[400px]">
                 <ContactList
-                    contacts={filteredContacts}
+                    contacts={contacts}
                     isAdmin={isAdmin}
+                    groups={groups}
                     onEdit={isAdmin ? (contact) => {
                         setEditingContact(contact);
                         setShowForm(true);

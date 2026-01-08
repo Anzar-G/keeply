@@ -51,6 +51,27 @@ db.run(`
   )
 `);
 
+// Create contact_groups table
+db.run(`
+  CREATE TABLE IF NOT EXISTS contact_groups (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    color TEXT DEFAULT '#4338ca',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// Create contact_group_members table (Mapping)
+db.run(`
+  CREATE TABLE IF NOT EXISTS contact_group_members (
+    contact_id TEXT,
+    group_id TEXT,
+    PRIMARY KEY (contact_id, group_id),
+    FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
+    FOREIGN KEY (group_id) REFERENCES contact_groups(id) ON DELETE CASCADE
+  )
+`);
+
 // Helper function to log activity
 const logActivity = (userId, action, details) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -230,11 +251,54 @@ app.get('/', (req, res) => {
     res.json({ message: 'Contact Manager API is running! 🚀' });
 });
 
-// GET all contacts (public or protected - your choice)
+// GET all contacts with Advanced Filtering
 app.get('/api/contacts', (req, res) => {
-    db.all('SELECT * FROM contacts ORDER BY created_at DESC', [], (err, rows) => {
+    const { company, tag, group, dateFrom, dateTo, search } = req.query;
+    let query = 'SELECT c.* FROM contacts c';
+    let params = [];
+    let conditions = [];
+
+    if (group) {
+        query += ' JOIN contact_group_members cgm ON c.id = cgm.contact_id';
+        conditions.push('cgm.group_id = ?');
+        params.push(group);
+    }
+
+    if (company) {
+        conditions.push('c.company LIKE ?');
+        params.push(`${company}`);
+    }
+
+    if (tag) {
+        conditions.push('c.tags LIKE ?');
+        params.push(`%${tag}%`);
+    }
+
+    if (dateFrom) {
+        conditions.push('c.created_at >= ?');
+        params.push(dateFrom);
+    }
+
+    if (dateTo) {
+        conditions.push('c.created_at <= ?');
+        params.push(dateTo);
+    }
+
+    if (search) {
+        conditions.push('(c.name LIKE ? OR c.email LIKE ? OR c.company LIKE ?)');
+        params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    query += ' ORDER BY c.created_at DESC';
+
+    db.all(query, params, (err, rows) => {
         if (err) {
-            return res.status(500).json({ error: 'Failed to fetch contacts' });
+            console.error('Filtering Error:', err);
+            return res.status(500).json({ error: 'Failed to fetch contacts with filters' });
         }
 
         const contacts = rows.map(row => ({
@@ -360,6 +424,71 @@ app.delete('/api/contacts/:id', authMiddleware, roleCheck(['admin']), (req, res)
         logActivity(req.user.userId, 'DELETE_CONTACT', { id });
 
         res.json({ message: 'Contact deleted successfully' });
+    });
+});
+
+// ========== CONTACT GROUP ROUTES ==========
+
+// GET all groups with counts
+app.get('/api/groups', authMiddleware, (req, res) => {
+    db.all(`
+        SELECT g.*, COUNT(cgm.contact_id) as contact_count 
+        FROM contact_groups g 
+        LEFT JOIN contact_group_members cgm ON g.id = cgm.group_id 
+        GROUP BY g.id 
+        ORDER BY g.name ASC
+    `, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: 'Failed to fetch groups' });
+        res.json(rows);
+    });
+});
+
+// POST create group (Admin only)
+app.post('/api/groups', authMiddleware, roleCheck(['admin']), (req, res) => {
+    const { name, color } = req.body;
+    if (!name) return res.status(400).json({ error: 'Group name is required' });
+
+    const id = 'group_' + Date.now().toString() + Math.random().toString(36).substr(2, 5);
+    db.run(
+        'INSERT INTO contact_groups (id, name, color) VALUES (?, ?, ?)',
+        [id, name, color || '#4338ca'],
+        function (err) {
+            if (err) return res.status(500).json({ error: 'Failed to create group' });
+            logActivity(req.user.userId, 'CREATE_GROUP', { name });
+            res.status(201).json({ id, name, color });
+        }
+    );
+});
+
+// DELETE group (Admin only)
+app.delete('/api/groups/:id', authMiddleware, roleCheck(['admin']), (req, res) => {
+    const { id } = req.params;
+    db.run('DELETE FROM contact_groups WHERE id = ?', [id], function (err) {
+        if (err) return res.status(500).json({ error: 'Failed to delete group' });
+        logActivity(req.user.userId, 'DELETE_GROUP', { id });
+        res.json({ message: 'Group deleted successfully' });
+    });
+});
+
+// POST bulk assign contacts to group (Admin only)
+app.post('/api/contacts/bulk-group', authMiddleware, roleCheck(['admin']), (req, res) => {
+    const { contactIds, groupId } = req.body;
+    if (!contactIds || !Array.isArray(contactIds) || !groupId) {
+        return res.status(400).json({ error: 'Invalid selection or group ID' });
+    }
+
+    const placeholders = contactIds.map(() => '(?, ?)').join(', ');
+    const params = [];
+    contactIds.forEach(cId => params.push(cId, groupId));
+
+    // First delete existing mappings if any to avoid unique constraint error if re-assigned
+    // Actually our PK is (contact_id, group_id), so we can just use INSERT OR IGNORE
+    const query = `INSERT OR IGNORE INTO contact_group_members (contact_id, group_id) VALUES ${placeholders}`;
+
+    db.run(query, params, function (err) {
+        if (err) return res.status(500).json({ error: 'Failed to assign contacts to group' });
+        logActivity(req.user.userId, 'BULK_ASSIGN_GROUP', { count: contactIds.length, groupId });
+        res.json({ message: `Successfully assigned ${this.changes} contacts to group` });
     });
 });
 

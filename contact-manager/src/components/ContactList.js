@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone } from 'lucide-react';
+import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone, FolderPlus, ChevronUp } from 'lucide-react';
+import { contactAPI } from '../services/api';
+import toast from 'react-hot-toast';
+import { useNotification } from '../context/NotificationContext';
 
-function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin }) {
+function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups }) {
     const [selectedIds, setSelectedIds] = useState([]);
+    const [showGroupSelect, setShowGroupSelect] = useState(false);
+    const { addNotification } = useNotification();
 
     const allSelected = contacts.length > 0 && selectedIds.length === contacts.length;
 
@@ -27,6 +32,18 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin }) {
             onBulkDelete(selectedIds).then(() => {
                 setSelectedIds([]);
             });
+        }
+    };
+    const handleBulkGroupAssign = async (groupId) => {
+        try {
+            await contactAPI.bulkAssignToGroup(selectedIds, groupId);
+            const groupName = groups.find(g => g.id === groupId)?.name || 'Group';
+            toast.success(`Assigned ${selectedIds.length} contacts to ${groupName}`);
+            addNotification(`Assigned ${selectedIds.length} contacts to group "${groupName}"`);
+            setSelectedIds([]);
+            setShowGroupSelect(false);
+        } catch (error) {
+            toast.error('Failed to assign group');
         }
     };
 
@@ -219,6 +236,38 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin }) {
                                     <Trash2 size={14} />
                                     Archive
                                 </button>
+                            )}
+                            {onBulkDelete && isAdmin && groups && groups.length > 0 && (
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowGroupSelect(!showGroupSelect)}
+                                        className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white text-xs font-extrabold rounded-xl hover:bg-slate-700 transition-all active:scale-95 tracking-wider uppercase"
+                                    >
+                                        <FolderPlus size={14} />
+                                        Group
+                                        <ChevronUp size={12} className={`transition-transform ${showGroupSelect ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {showGroupSelect && (
+                                        <div className="absolute bottom-full mb-3 left-0 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden min-w-[200px] animate-in slide-in-from-bottom-2 duration-200">
+                                            <div className="p-3 border-b border-slate-800">
+                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Select Group</p>
+                                            </div>
+                                            <div className="max-h-48 overflow-y-auto py-1">
+                                                {groups.map(group => (
+                                                    <button
+                                                        key={group.id}
+                                                        onClick={() => handleBulkGroupAssign(group.id)}
+                                                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+                                                    >
+                                                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: group.color || '#4338ca' }} />
+                                                        <span className="text-xs font-bold">{group.name}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             )}
                             <button
                                 onClick={handleExportCSV}

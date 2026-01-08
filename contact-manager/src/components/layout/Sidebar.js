@@ -1,10 +1,37 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, UserCircle, Settings, History, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, UserCircle, Settings, History, Shield, Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { groupAPI } from '../../services/api';
+import toast from 'react-hot-toast';
 
 const Sidebar = () => {
     const { user } = useAuth();
+    const [groups, setGroups] = React.useState([]);
+
+    React.useEffect(() => {
+        const fetchGroups = async () => {
+            try {
+                const data = await groupAPI.getAll();
+                setGroups(data);
+            } catch (error) {
+                console.error('Failed to load groups in sidebar');
+            }
+        };
+        fetchGroups();
+    }, []);
+
+    const handleAddGroup = async () => {
+        const name = window.prompt('Enter new group name:');
+        if (!name) return;
+        try {
+            const newGroup = await groupAPI.create({ name });
+            setGroups([...groups, newGroup]);
+            toast.success('Group created');
+        } catch (error) {
+            toast.error('Failed to create group');
+        }
+    };
 
     return (
         <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-slate-100 bg-white transition-transform md:translate-x-0">
@@ -48,6 +75,55 @@ const Sidebar = () => {
                         <LayoutDashboard size={18} />
                         Analytics
                     </NavLink>
+
+                    {/* Groups Section */}
+                    <div className="pt-6">
+                        <div className="flex items-center justify-between px-4 mb-4">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">Contact Groups</p>
+                            {user?.role === 'admin' && (
+                                <button
+                                    onClick={handleAddGroup}
+                                    className="p-1 hover:bg-slate-100 rounded-md text-slate-400 hover:text-indigo-600 transition-colors"
+                                    title="Create Group"
+                                >
+                                    <Plus size={14} />
+                                </button>
+                            )}
+                        </div>
+                        <div className="space-y-1">
+                            {groups.map(group => (
+                                <NavLink
+                                    key={group.id}
+                                    to={`/?group=${group.id}`}
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-3 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 ${isActive
+                                            ? 'bg-slate-50 text-indigo-700'
+                                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                        }`
+                                    }
+                                >
+                                    {({ isActive }) => (
+                                        <>
+                                            <div
+                                                className="h-2 w-2 rounded-full"
+                                                style={{ backgroundColor: group.color || '#4338ca' }}
+                                            />
+                                            <span className="flex-1 truncate">{group.name}</span>
+                                            {group.contact_count > 0 && (
+                                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isActive ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-500'
+                                                    }`}>
+                                                    {group.contact_count}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </NavLink>
+                            ))}
+                            {groups.length === 0 && (
+                                <p className="px-4 text-[10px] font-medium text-slate-400 italic">No groups defined</p>
+                            )}
+                        </div>
+                    </div>
 
                     {user?.role === 'admin' && (
                         <>

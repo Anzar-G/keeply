@@ -35,8 +35,8 @@ api.interceptors.response.use(
 
 // Contact API
 export const contactAPI = {
-    getAll: async () => {
-        const response = await api.get('/contacts');
+    getAll: async (params = {}) => {
+        const response = await api.get('/contacts', { params });
         return response.data;
     },
 
@@ -57,6 +57,27 @@ export const contactAPI = {
 
     delete: async (id) => {
         const response = await api.delete(`/contacts/${id}`);
+        return response.data;
+    },
+
+    bulkAssignToGroup: async (contactIds, groupId) => {
+        const response = await api.post('/contacts/bulk-group', { contactIds, groupId });
+        return response.data;
+    }
+};
+
+// Group API
+export const groupAPI = {
+    getAll: async () => {
+        const response = await api.get('/groups');
+        return response.data;
+    },
+    create: async (groupData) => {
+        const response = await api.post('/groups', groupData);
+        return response.data;
+    },
+    delete: async (id) => {
+        const response = await api.delete(`/groups/${id}`);
         return response.data;
     }
 };
