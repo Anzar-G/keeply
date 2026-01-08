@@ -121,7 +121,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin }) {
                                             <div className="min-w-0">
                                                 <div className="font-bold text-slate-900 truncate flex items-center gap-2">
                                                     {contact.name}
-                                                    {isSelected && <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>}
+                                                    {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>}
                                                 </div>
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
@@ -197,14 +197,14 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin }) {
 
             {/* Bulk Action Floating Bar */}
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-500">
-                    <div className="bg-slate-900 border border-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] rounded-[2rem] px-10 py-5 flex items-center gap-12 backdrop-blur-md bg-slate-900/95">
+                <div className="fixed bottom-8 inset-x-0 z-50 flex justify-center pointer-events-none px-4">
+                    <div className="bg-slate-950 border border-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] rounded-3xl px-8 py-4 flex items-center gap-10 backdrop-blur-xl bg-slate-950/90 pointer-events-auto ring-1 ring-white/5 animate-in slide-in-from-bottom-5 duration-300">
                         <div className="flex items-center gap-4">
-                            <div className="bg-indigo-600 text-white text-[10px] font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                            <div className="bg-indigo-600 text-white text-[9px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                                 {selectedIds.length}
                             </div>
-                            <span className="text-xs font-extrabold text-white tracking-widest uppercase">
-                                {selectedIds.length} ENTRIES SELECTED
+                            <span className="text-[10px] font-black text-white tracking-[0.2em] uppercase whitespace-nowrap">
+                                {selectedIds.length} Selected
                             </span>
                         </div>
 

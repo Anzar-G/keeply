@@ -38,7 +38,7 @@
   }
 
   .premium-card:hover {
-    @apply shadow-md border-slate-200 -translate-y-0.5;
+    @apply shadow-md border-slate-200;
   }
 
   .nav-link-active {

@@ -15,7 +15,7 @@ const StatCard = ({ title, value, change, icon: Icon, color, isNegative, percent
             </div>
         </div>
         <div className="mt-4">
-            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{title}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{title}</p>
             <div className="flex items-baseline gap-2 mt-1">
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{value}</h3>
                 <span className="text-[11px] font-semibold text-slate-400">total</span>
@@ -90,8 +90,8 @@ const Dashboard = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Performance Overview</h1>
-                    <p className="text-slate-500 mt-1 font-medium">Visualizing your database's growth and relationship health.</p>
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Performance Overview</h1>
+                    <p className="text-slate-500 mt-1 font-medium italic">Monitor your registry's growth and relationship health.</p>
                 </div>
                 <div className="flex gap-2">
                     <button className="btn-secondary px-5">
