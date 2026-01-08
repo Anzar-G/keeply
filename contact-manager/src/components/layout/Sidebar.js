@@ -1,10 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, UserCircle, Settings } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
-    const { user } = useAuth();
     return (
         <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-gray-200 bg-white transition-transform md:translate-x-0">
             {/* Logo Area */}
