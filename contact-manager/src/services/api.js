@@ -86,3 +86,11 @@ export const authAPI = {
         return response.data;
     }
 };
+
+// Activity API
+export const activityAPI = {
+    getAll: async () => {
+        const response = await api.get('/activities');
+        return response.data;
+    }
+};

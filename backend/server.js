@@ -40,7 +40,30 @@ db.run(`
   )
 `);
 
-// Create users table
+// Create activity_logs table
+db.run(`
+  CREATE TABLE IF NOT EXISTS activity_logs (
+    id TEXT PRIMARY KEY,
+    user_id TEXT,
+    action TEXT NOT NULL,
+    details TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// Helper function to log activity
+const logActivity = (userId, action, details) => {
+    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    db.run(
+        'INSERT INTO activity_logs (id, user_id, action, details) VALUES (?, ?, ?, ?)',
+        [id, userId, action, JSON.stringify(details || {})],
+        (err) => {
+            if (err) console.error('❌ Failed to log activity:', err);
+        }
+    );
+};
+
+// Create users table and default admin
 db.run(`
   CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
@@ -52,12 +75,10 @@ db.run(`
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `, () => {
-    // Create default admin user if not exists
     db.get('SELECT * FROM users WHERE email = ?', ['admin@example.com'], async (err, row) => {
         if (!row) {
             const hashedPassword = await bcrypt.hash('admin123', 10);
             const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-
             db.run(
                 'INSERT INTO users (id, username, email, password, role) VALUES (?, ?, ?, ?, ?)',
                 [id, 'admin', 'admin@example.com', hashedPassword, 'admin'],
@@ -180,6 +201,27 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
         res.json(user);
     });
 });
+// ========== ACTIVITY LOG ROUTES ==========
+
+// GET all activities (Admin only)
+app.get('/api/activities', authMiddleware, roleCheck(['admin']), (req, res) => {
+    db.all(`
+        SELECT al.*, u.username as actor 
+        FROM activity_logs al 
+        LEFT JOIN users u ON al.user_id = u.id 
+        ORDER BY al.created_at DESC 
+        LIMIT 100
+    `, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to fetch activities' });
+        }
+        const activities = rows.map(row => ({
+            ...row,
+            details: JSON.parse(row.details || '{}')
+        }));
+        res.json(activities);
+    });
+});
 
 // ========== CONTACT ROUTES ==========
 
@@ -235,8 +277,8 @@ app.post('/api/contacts', authMiddleware, roleCheck(['admin']), (req, res) => {
     const tagsJSON = JSON.stringify(tags || []);
 
     db.run(
-        `INSERT INTO contacts (id, name, email, phone, company, position, tags, notes) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO contacts(id, name, email, phone, company, position, tags, notes) 
+     VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name, email, phone || '', company || '', position || '', tagsJSON, notes || ''],
         function (err) {
             if (err) {
@@ -247,10 +289,18 @@ app.post('/api/contacts', authMiddleware, roleCheck(['admin']), (req, res) => {
             }
 
             db.get('SELECT * FROM contacts WHERE id = ?', [id], (err, row) => {
-                res.status(201).json({
+                const contactData = {
                     ...row,
                     tags: JSON.parse(row.tags || '[]')
+                };
+
+                // Log activity
+                logActivity(req.user.userId, 'CREATE_CONTACT', {
+                    name: contactData.name,
+                    email: contactData.email
                 });
+
+                res.status(201).json(contactData);
             });
         }
     );
@@ -266,7 +316,7 @@ app.put('/api/contacts/:id', authMiddleware, roleCheck(['admin']), (req, res) =>
     db.run(
         `UPDATE contacts 
      SET name = ?, email = ?, phone = ?, company = ?, position = ?, tags = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`,
+     WHERE id = ? `,
         [name, email, phone || '', company || '', position || '', tagsJSON, notes || '', id],
         function (err) {
             if (err) {
@@ -277,10 +327,18 @@ app.put('/api/contacts/:id', authMiddleware, roleCheck(['admin']), (req, res) =>
             }
 
             db.get('SELECT * FROM contacts WHERE id = ?', [id], (err, row) => {
-                res.json({
+                const contactData = {
                     ...row,
                     tags: JSON.parse(row.tags || '[]')
+                };
+
+                // Log activity
+                logActivity(req.user.userId, 'UPDATE_CONTACT', {
+                    id,
+                    name: contactData.name
                 });
+
+                res.json(contactData);
             });
         }
     );
@@ -297,6 +355,9 @@ app.delete('/api/contacts/:id', authMiddleware, roleCheck(['admin']), (req, res)
         if (this.changes === 0) {
             return res.status(404).json({ error: 'Contact not found' });
         }
+
+        // Log activity
+        logActivity(req.user.userId, 'DELETE_CONTACT', { id });
 
         res.json({ message: 'Contact deleted successfully' });
     });

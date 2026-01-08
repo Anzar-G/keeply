@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { User, Mail, Phone, Building2, Briefcase, Tag, FileText, X, Check } from 'lucide-react';
 
 function ContactForm({ contact, onSubmit, onCancel }) {
     const [formData, setFormData] = useState({
@@ -41,13 +42,13 @@ function ContactForm({ contact, onSubmit, onCancel }) {
         const newErrors = {};
 
         if (!formData.name.trim()) {
-            newErrors.name = 'Name is required';
+            newErrors.name = 'Full name is required';
         }
 
         if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
+            newErrors.email = 'Email address is required';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Invalid email format';
+            newErrors.email = 'Please enter a valid email';
         }
 
         setErrors(newErrors);
@@ -58,7 +59,6 @@ function ContactForm({ contact, onSubmit, onCancel }) {
         e.preventDefault();
 
         if (validate()) {
-            // Convert tags string to array
             const dataToSubmit = {
                 ...formData,
                 tags: formData.tags
@@ -71,135 +71,66 @@ function ContactForm({ contact, onSubmit, onCancel }) {
         }
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.name
-                            ? 'border-red-500 focus:ring-red-500'
-                            : 'border-gray-300 focus:ring-blue-500'
-                        }`}
-                    placeholder="John Doe"
-                />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-            </div>
-
-            {/* Email */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.email
-                            ? 'border-red-500 focus:ring-red-500'
-                            : 'border-gray-300 focus:ring-blue-500'
-                        }`}
-                    placeholder="john@example.com"
-                />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-            </div>
-
-            {/* Phone */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone
-                </label>
-                <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+62 812 3456 7890"
-                />
-            </div>
-
-            {/* Company */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Company
-                </label>
-                <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="PT ABC Indonesia"
-                />
-            </div>
-
-            {/* Position */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Position
-                </label>
-                <input
-                    type="text"
-                    name="position"
-                    value={formData.position}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Marketing Manager"
-                />
-            </div>
-
-            {/* Tags */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tags (pisahkan dengan koma)
-                </label>
-                <input
-                    type="text"
-                    name="tags"
-                    value={formData.tags}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="VIP, Marketing, Lead"
-                />
-            </div>
-
-            {/* Notes */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Notes
-                </label>
+    const InputField = ({ label, icon: Icon, name, type = "text", placeholder, error, rows }) => (
+        <div className="space-y-2">
+            <label className="flex items-center gap-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">
+                <Icon size={12} className="text-slate-300" />
+                {label}
+                {label === 'Name' || label === 'Email' ? <span className="text-rose-400">*</span> : null}
+            </label>
+            {rows ? (
                 <textarea
-                    name="notes"
-                    value={formData.notes}
+                    name={name}
+                    value={formData[name]}
                     onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Additional information..."
+                    rows={rows}
+                    className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-700 placeholder:text-slate-300 shadow-inner ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
+                        }`}
+                    placeholder={placeholder}
                 />
+            ) : (
+                <input
+                    type={type}
+                    name={name}
+                    value={formData[name]}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-700 placeholder:text-slate-300 shadow-inner ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
+                        }`}
+                    placeholder={placeholder}
+                />
+            )}
+            {error && <p className="text-rose-500 text-[10px] font-bold px-1 italic">{error}</p>}
+        </div>
+    );
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InputField label="Name" icon={User} name="name" placeholder="E.g. Alexander Pierce" error={errors.name} />
+                <InputField label="Email" icon={Mail} name="email" type="email" placeholder="alex@company.com" error={errors.email} />
+                <InputField label="Phone" icon={Phone} name="phone" placeholder="+1 (555) 000-0000" />
+                <InputField label="Company" icon={Building2} name="company" placeholder="Acme Corp" />
+                <InputField label="Position" icon={Briefcase} name="position" placeholder="Systems Architect" />
+                <InputField label="Tags" icon={Tag} name="tags" placeholder="VIP, Engineering, Lead (comma separated)" />
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end gap-3 pt-4">
+            <InputField label="Additional Notes" icon={FileText} name="notes" placeholder="Any relevant details about this contact..." rows={4} />
+
+            <div className="flex justify-end items-center gap-4 pt-4 border-t border-slate-50">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                    className="flex items-center gap-2 px-6 py-3 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
                 >
-                    Cancel
+                    <X size={18} />
+                    Discard Changes
                 </button>
                 <button
                     type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    className="btn-primary flex items-center gap-2 px-8 py-3 rounded-2xl shadow-lg shadow-indigo-100"
                 >
-                    {contact ? 'Update' : 'Save'} Contact
+                    <Check size={18} />
+                    {contact ? 'Update Registry' : 'Save Entry'}
                 </button>
             </div>
         </form>

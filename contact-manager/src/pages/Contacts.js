@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ContactList from '../components/ContactList';
 import ContactForm from '../components/ContactForm';
-import { Plus, Search, Loader2 } from 'lucide-react';
+import { Plus, Search, Loader2, Users, Filter, Download } from 'lucide-react';
 import { contactAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { useNotification } from '../context/NotificationContext';
@@ -16,7 +16,6 @@ function Contacts() {
     const { addNotification } = useNotification();
     const { isAdmin } = useAuth();
 
-    // Load contacts on mount
     useEffect(() => {
         loadContacts();
     }, []);
@@ -28,8 +27,7 @@ function Contacts() {
             setContacts(data);
         } catch (error) {
             console.error('Error loading contacts:', error);
-            // Replaced alert with toast
-            toast.error('Failed to load contacts. Make sure backend is running.');
+            toast.error('Failed to load contacts.');
         } finally {
             setLoading(false);
         }
@@ -44,11 +42,7 @@ function Contacts() {
             addNotification(`New contact "${newContact.name}" added`);
         } catch (error) {
             console.error('Error adding contact:', error);
-            if (error.message && error.message.includes('Email already exists')) {
-                toast.error('Email already exists');
-            } else {
-                toast.error('Failed to add contact');
-            }
+            toast.error(error.response?.data?.error || 'Failed to add contact');
         }
     };
 
@@ -71,12 +65,10 @@ function Contacts() {
     const handleDeleteContact = async (id) => {
         if (window.confirm('Are you sure you want to delete this contact?')) {
             try {
-                // Find contact name before deleting for notification
                 const contactName = contacts.find(c => c.id === id)?.name || 'Unknown';
-
                 await contactAPI.delete(id);
                 setContacts((prev) => prev.filter((c) => c.id !== id));
-                toast.success('Contact deleted successfully!');
+                toast.success('Contact deleted successfully');
                 addNotification(`Contact "${contactName}" deleted`);
             } catch (error) {
                 console.error('Error deleting contact:', error);
@@ -88,12 +80,9 @@ function Contacts() {
     const handleBulkDelete = async (ids) => {
         if (window.confirm(`Are you sure you want to delete ${ids.length} contacts?`)) {
             try {
-                // Delete all selected contacts concurrently
                 await Promise.all(ids.map(id => contactAPI.delete(id)));
-
-                // Update local state
                 setContacts((prev) => prev.filter((c) => !ids.includes(c.id)));
-                toast.success('Selected contacts deleted successfully!');
+                toast.success('Selected contacts deleted');
                 addNotification(`${ids.length} contacts deleted via bulk action`);
             } catch (error) {
                 console.error('Error deleting contacts:', error);
@@ -102,71 +91,99 @@ function Contacts() {
         }
     };
 
-    // Filter contacts based on search
     const filteredContacts = contacts.filter(contact =>
         contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (contact.company && contact.company.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
-    return (
-        <div className="max-w-7xl mx-auto space-y-6">
-            {/* Header Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-                <div className="relative w-full sm:w-96">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                        type="text"
-                        placeholder="Search contacts..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    />
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <div className="text-center">
+                    <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mx-auto mb-4" />
+                    <p className="text-slate-500 font-medium">Synchronizing contact registry...</p>
                 </div>
-                {isAdmin && (
-                    <button
-                        onClick={() => {
-                            setEditingContact(null);
-                            setShowForm(true);
-                        }}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-sm w-full sm:w-auto justify-center"
-                    >
-                        <Plus size={20} />
-                        Add Contact
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-700">
+            {/* Header section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Contact Registry</h1>
+                    <p className="text-slate-500 mt-1 font-medium italic">Manage and organize your professional network with precision.</p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button className="btn-secondary flex items-center gap-2">
+                        <Download size={18} />
+                        Export
                     </button>
-                )}
+                    {isAdmin && (
+                        <button
+                            onClick={() => {
+                                setEditingContact(null);
+                                setShowForm(true);
+                            }}
+                            className="btn-primary flex items-center gap-2"
+                        >
+                            <Plus size={18} />
+                            Add Contact
+                        </button>
+                    )}
+                </div>
             </div>
 
-            {/* Content Area */}
-            {loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                </div>
-            ) : (
-                <>
-                    {/* Contact List */}
-                    <ContactList
-                        contacts={filteredContacts}
-                        onEdit={isAdmin ? (contact) => {
-                            setEditingContact(contact);
-                            setShowForm(true);
-                        } : null}
-                        onDelete={isAdmin ? handleDeleteContact : null}
-                        onBulkDelete={isAdmin ? handleBulkDelete : null}
+            {/* Toolbar Area */}
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1 group">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                    <input
+                        type="text"
+                        placeholder="Search by name, email, or company..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-700 placeholder:text-slate-400 shadow-sm"
                     />
-                </>
-            )}
+                </div>
+                <button className="btn-secondary flex items-center gap-2 border-slate-200 px-6">
+                    <Filter size={18} />
+                    Filters
+                </button>
+            </div>
 
-            {/* Modal Form - Only for Admins */}
+            {/* List Content */}
+            <div className="premium-card min-h-[400px]">
+                <ContactList
+                    contacts={filteredContacts}
+                    onEdit={isAdmin ? (contact) => {
+                        setEditingContact(contact);
+                        setShowForm(true);
+                    } : null}
+                    onDelete={isAdmin ? handleDeleteContact : null}
+                    onBulkDelete={isAdmin ? handleBulkDelete : null}
+                />
+            </div>
+
+            {/* Modal Form */}
             {showForm && isAdmin && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-900">
-                                {editingContact ? 'Edit Contact' : 'Add New Contact'}
-                            </h2>
+                <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col scale-in-center">
+                        <div className="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
+                            <div>
+                                <h2 className="text-2xl font-extrabold text-slate-900">
+                                    {editingContact ? 'Refine Contact' : 'Create New Entry'}
+                                </h2>
+                                <p className="text-sm text-slate-500 font-medium">Please provide accurate contact information.</p>
+                            </div>
+                            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors" onClick={() => setShowForm(false)}>
+                                <Plus className="rotate-45" size={24} />
+                            </div>
                         </div>
-                        <div className="p-6">
+                        <div className="p-8 overflow-y-auto">
                             <ContactForm
                                 contact={editingContact}
                                 onSubmit={editingContact ? handleUpdateContact : handleAddContact}

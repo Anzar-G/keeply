@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogIn, Loader2 } from 'lucide-react';
+import { LogIn, Loader2, Shield, Lock, Mail, Key } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function Login() {
@@ -18,87 +18,114 @@ function Login() {
         const result = await login(email, password);
 
         if (result.success) {
-            toast.success('Login successful!');
+            toast.success('Access granted. Welcome back.');
             navigate('/');
         } else {
-            toast.error(result.error || 'Login failed');
+            toast.error(result.error || 'Authentication failed');
         }
 
         setLoading(false);
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
-                {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <LogIn className="w-8 h-8 text-white" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                    <p className="text-gray-500">Sign in to your account to continue</p>
-                </div>
+        <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 relative overflow-hidden font-inter">
+            {/* Ambient Background Elements */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
+            </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Email */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address
-                        </label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                            placeholder="admin@example.com"
-                        />
-                    </div>
-
-                    {/* Password */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                            placeholder="••••••••"
-                        />
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                Signing in...
-                            </>
-                        ) : (
-                            <>
-                                <LogIn className="w-5 h-5" />
-                                Sign In
-                            </>
-                        )}
-                    </button>
-                </form>
-
-                {/* Demo Credentials */}
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                    <p className="text-sm font-medium text-blue-900 mb-2">Demo Credentials:</p>
-                    <div className="text-sm text-blue-700 space-y-1">
-                        <p><strong>Email:</strong> admin@example.com</p>
-                        <p><strong>Password:</strong> admin123</p>
+            <div className="w-full max-w-lg relative z-10">
+                {/* Brand Logo */}
+                <div className="flex justify-center mb-12 animate-in fade-in zoom-in duration-700">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-2xl shadow-indigo-500/20 text-white">
+                            <Shield size={28} fill="currentColor" />
+                        </div>
+                        <span className="font-extrabold text-3xl text-white tracking-tight">Keeply<span className="text-indigo-500">.</span></span>
                     </div>
                 </div>
+
+                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] shadow-2xl p-10 md:p-14 animate-in slide-in-from-bottom-8 duration-700">
+                    {/* Header */}
+                    <div className="text-center mb-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-extrabold uppercase tracking-widest mb-6">
+                            <Lock size={12} />
+                            Secure Access
+                        </div>
+                        <h1 className="text-3xl font-extrabold text-white tracking-tight mb-3">Admin Portal</h1>
+                        <p className="text-slate-400 font-medium">Please authenticate to manage the registry</p>
+                    </div>
+
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">
+                                <Mail size={12} />
+                                Work Email
+                            </label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-white placeholder:text-slate-600"
+                                placeholder="name@company.com"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">
+                                <Key size={12} />
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-white placeholder:text-slate-600"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-2xl shadow-xl shadow-indigo-600/20 transition-all font-extrabold flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group active:scale-95"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Authenticating...
+                                </>
+                            ) : (
+                                <>
+                                    <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    Enter Registry
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Demo Footer */}
+                    <div className="mt-12 flex flex-col items-center gap-4">
+                        <div className="h-px w-12 bg-white/10"></div>
+                        <div className="text-center">
+                            <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-3">Audit Credentials</p>
+                            <div className="flex items-center gap-4 text-xs font-bold px-4 py-2 rounded-xl bg-white/5 border border-white/5">
+                                <span className="text-indigo-400">admin@example.com</span>
+                                <span className="text-slate-600">•</span>
+                                <span className="text-slate-400">admin123</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Final Footer */}
+                <p className="text-center mt-10 text-slate-500 text-xs font-medium tracking-tight italic">
+                    Keeply Protocol v2.4.0 • Encrypted Management System
+                </p>
             </div>
         </div>
     );
