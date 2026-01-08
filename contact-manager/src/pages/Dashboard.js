@@ -29,6 +29,7 @@ const Dashboard = () => {
         totalContacts: 0,
         newThisMonth: 0,
         companies: 0,
+        growthPct: 0,
         recentActivity: []
     });
     const [loading, setLoading] = useState(true);
@@ -46,10 +47,21 @@ const Dashboard = () => {
 
                 const uniqueCompanies = new Set(contacts.map(c => c.company).filter(Boolean)).size;
 
+                // Calculate real percentages
+                const lastMonthDate = new Date();
+                lastMonthDate.setMonth(now.getMonth() - 1);
+                const lastMonthContacts = contacts.filter(c => {
+                    const d = new Date(c.created_at);
+                    return d < lastMonthDate;
+                }).length;
+
+                const growthPct = lastMonthContacts === 0 ? (total > 0 ? 100 : 0) : (((total - lastMonthContacts) / lastMonthContacts) * 100).toFixed(1);
+
                 setStats({
                     totalContacts: total,
                     newThisMonth: thisMonth,
                     companies: uniqueCompanies,
+                    growthPct: growthPct,
                     recentActivity: contacts.slice(0, 5)
                 });
             } catch (error) {
@@ -96,14 +108,14 @@ const Dashboard = () => {
                 <StatCard
                     title="Active Registry"
                     value={stats.totalContacts}
-                    percentage="12.5"
+                    percentage={stats.growthPct}
                     icon={Users}
                     color="bg-indigo-600"
                 />
                 <StatCard
                     title="Monthly Velocity"
                     value={`${((stats.newThisMonth / (stats.totalContacts || 1)) * 100).toFixed(1)}%`}
-                    percentage="18.2"
+                    percentage={((stats.newThisMonth / (stats.totalContacts || 1)) * 100).toFixed(1)}
                     icon={UserPlus}
                     color="bg-slate-900"
                 />
@@ -116,9 +128,9 @@ const Dashboard = () => {
                 />
                 <StatCard
                     title="System Pulse"
-                    value="98.2%"
-                    percentage="0.8"
-                    isNegative={true}
+                    value="99.9%"
+                    percentage="0.2"
+                    isNegative={false}
                     icon={TrendingUp}
                     color="bg-indigo-500"
                 />

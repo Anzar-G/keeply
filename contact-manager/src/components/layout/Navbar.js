@@ -12,7 +12,7 @@ function Navbar({ toggleSidebar, isMobile }) {
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/');
     };
 
     return (
