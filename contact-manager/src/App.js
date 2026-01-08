@@ -1,12 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Contacts from './pages/Contacts';
 import Login from './pages/Login';
-import { Loader2 } from 'lucide-react';
 
 
 function App() {
