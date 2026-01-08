@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import Layout from './components/layout/Layout';
@@ -31,31 +31,33 @@ function App() {
         <AuthProvider>
             <NotificationProvider>
                 <BrowserRouter>
-                    {/* Public Route */}
-                    <Route path="/login" element={<Login />} />
-                    <Route
-                        path="/"
-                        element={
-                            <Layout>
-                                <Contacts />
-                            </Layout>
-                        }
-                    />
-
-                    {/* Protected Routes */}
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <PrivateRoute>
+                    <Routes>
+                        {/* Public Route */}
+                        <Route path="/login" element={<Login />} />
+                        <Route
+                            path="/"
+                            element={
                                 <Layout>
-                                    <Dashboard />
+                                    <Contacts />
                                 </Layout>
-                            </PrivateRoute>
-                        }
-                    />
+                            }
+                        />
 
-                    {/* Fallback */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                        {/* Protected Routes */}
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <PrivateRoute>
+                                    <Layout>
+                                        <Dashboard />
+                                    </Layout>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        {/* Fallback */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
                 </BrowserRouter>
             </NotificationProvider>
         </AuthProvider>
