@@ -32,20 +32,18 @@ const Sidebar = () => {
                         <Users size={20} />
                         Contact List
                     </NavLink>
-                    {user?.role === 'admin' && (
-                        <NavLink
-                            to="/dashboard"
-                            className={({ isActive }) =>
-                                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive
-                                    ? 'bg-blue-50 text-blue-600'
-                                    : 'text-gray-700 hover:bg-gray-100'
-                                }`
-                            }
-                        >
-                            <LayoutDashboard size={20} />
-                            Dashboard
-                        </NavLink>
-                    )}
+                    <NavLink
+                        to="/dashboard"
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive
+                                ? 'bg-blue-50 text-blue-600'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`
+                        }
+                    >
+                        <LayoutDashboard size={20} />
+                        Dashboard
+                    </NavLink>
                 </nav>
 
                 {/* Bottom Section */}
