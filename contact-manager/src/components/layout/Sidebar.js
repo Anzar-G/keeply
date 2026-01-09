@@ -34,28 +34,28 @@ const Sidebar = () => {
     };
 
     return (
-        <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-slate-100 bg-white transition-transform md:translate-x-0">
+        <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-transform md:translate-x-0">
             {/* Logo Area */}
-            <div className="flex h-20 items-center border-b border-slate-50 px-8">
+            <div className="flex h-20 items-center border-b border-slate-50 dark:border-slate-800/50 px-8">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 shadow-indigo-200 shadow-lg text-white">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 shadow-indigo-200 dark:shadow-none shadow-lg text-white">
                         <Shield size={20} fill="currentColor" />
                     </div>
-                    <span className="font-extrabold text-xl text-slate-900 tracking-tight">Keeply<span className="text-indigo-600">.</span></span>
+                    <span className="font-extrabold text-xl text-slate-900 dark:text-slate-100 tracking-tight">Keeply<span className="text-indigo-600">.</span></span>
                 </div>
             </div>
 
             {/* Navigation and Bottom Section */}
             <div className="flex flex-col justify-between h-[calc(100vh-5rem)] overflow-y-auto px-4 py-8">
                 <nav className="space-y-2">
-                    <p className="px-4 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4">Main Menu</p>
+                    <p className="px-4 text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-4">Main Menu</p>
 
                     <NavLink
                         to="/"
                         className={({ isActive }) =>
                             `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 ${isActive
-                                ? 'bg-indigo-50 text-indigo-700 shadow-sm'
-                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 shadow-sm'
+                                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
                             }`
                         }
                     >
@@ -67,8 +67,8 @@ const Sidebar = () => {
                         to="/dashboard"
                         className={({ isActive }) =>
                             `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 ${isActive
-                                ? 'bg-indigo-50 text-indigo-700 shadow-sm'
-                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 shadow-sm'
+                                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
                             }`
                         }
                     >
@@ -79,11 +79,11 @@ const Sidebar = () => {
                     {/* Groups Section */}
                     <div className="pt-6">
                         <div className="flex items-center justify-between px-4 mb-4">
-                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">Contact Groups</p>
+                            <p className="text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]">Contact Groups</p>
                             {user?.role === 'admin' && (
                                 <button
                                     onClick={handleAddGroup}
-                                    className="p-1 hover:bg-slate-100 rounded-md text-slate-400 hover:text-indigo-600 transition-colors"
+                                    className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md text-slate-400 hover:text-indigo-600 transition-colors"
                                     title="Create Group"
                                 >
                                     <Plus size={14} />
@@ -97,8 +97,8 @@ const Sidebar = () => {
                                     to={`/?group=${group.id}`}
                                     className={({ isActive }) =>
                                         `flex items-center gap-3 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 ${isActive
-                                            ? 'bg-slate-50 text-indigo-700'
-                                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                            ? 'bg-slate-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-400'
+                                            : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
                                         }`
                                     }
                                 >
@@ -110,7 +110,7 @@ const Sidebar = () => {
                                             />
                                             <span className="flex-1 truncate">{group.name}</span>
                                             {group.contact_count > 0 && (
-                                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isActive ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-500'
+                                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isActive ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-950 text-slate-500 dark:text-slate-400'
                                                     }`}>
                                                     {group.contact_count}
                                                 </span>
@@ -127,13 +127,13 @@ const Sidebar = () => {
 
                     {user?.role === 'admin' && (
                         <>
-                            <p className="px-4 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mt-8 mb-4">Administration</p>
+                            <p className="px-4 text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mt-8 mb-4">Administration</p>
                             <NavLink
                                 to="/activities"
                                 className={({ isActive }) =>
                                     `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 ${isActive
-                                        ? 'bg-indigo-50 text-indigo-700 shadow-sm'
-                                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                        ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 shadow-sm'
+                                        : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
                                     }`
                                 }
                             >
@@ -145,17 +145,17 @@ const Sidebar = () => {
                 </nav>
 
                 {/* Bottom Section */}
-                <div className="mt-auto border-t border-slate-50 pt-8 space-y-2">
-                    <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200">
+                <div className="mt-auto border-t border-slate-50 dark:border-slate-800/50 pt-8 space-y-2">
+                    <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left">
                         <UserCircle size={18} />
                         Profile
                     </button>
-                    <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200">
+                    <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left">
                         <Settings size={18} />
                         Settings
                     </button>
 
-                    <div className="mt-6 p-4 rounded-2xl bg-slate-900 text-white relative overflow-hidden group">
+                    <div className="mt-6 p-4 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white relative overflow-hidden group border border-white/5">
                         <div className="relative z-10">
                             <p className="text-xs font-bold opacity-80 mb-1">Support Plan</p>
                             <p className="text-sm font-extrabold">Enterprise Plus</p>

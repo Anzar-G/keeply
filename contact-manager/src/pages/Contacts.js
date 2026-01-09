@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { useNotification } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
 import ImportModal from '../components/ImportModal';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 function Contacts() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -25,12 +26,28 @@ function Contacts() {
     const [editingContact, setEditingContact] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
     const [groups, setGroups] = useState([]);
+    const { isAdmin } = useAuth();
     const [activeFilters, setActiveFilters] = useState({
         group: groupParam,
         company: '',
         tag: '',
         dateFrom: '',
         dateTo: ''
+    });
+
+    // Keyboard Shortcuts
+    useKeyboardShortcuts({
+        'n': () => {
+            if (isAdmin) {
+                setEditingContact(null);
+                setShowForm(true);
+            }
+        },
+        'escape': () => {
+            setShowForm(false);
+            setShowImportModal(false);
+            setShowFilters(false);
+        }
     });
 
     // Debounce search query
@@ -52,10 +69,9 @@ function Contacts() {
             setSearchQuery(searchParam);
             setDebouncedSearch(searchParam);
         }
-    }, [searchParam]);
+    }, [searchParam, searchQuery]);
 
     const { addNotification } = useNotification();
-    const { isAdmin } = useAuth();
 
     const loadContacts = useCallback(async (isInitial = false) => {
         try {
@@ -109,7 +125,7 @@ function Contacts() {
         if (!loading) {
             loadContacts(false);
         }
-    }, [debouncedSearch, activeFilters, loadContacts, loading]);
+    }, [debouncedSearch, activeFilters, loadContacts, loading, searchQuery]);
 
     const handleAddContact = async (formData) => {
         try {
@@ -175,7 +191,7 @@ function Contacts() {
             <div className="flex justify-center items-center h-96">
                 <div className="text-center">
                     <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mx-auto mb-4" />
-                    <p className="text-slate-500 font-medium">Synchronizing contact registry...</p>
+                    <p className="text-slate-500 font-medium dark:text-slate-400">Synchronizing contact registry...</p>
                 </div>
             </div>
         );
@@ -186,8 +202,8 @@ function Contacts() {
             {/* Header section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Contact Registry</h1>
-                    <p className="text-slate-500 mt-1 font-medium italic">Manage and organize your professional network with precision.</p>
+                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Contact Registry</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Manage and organize your professional network with precision.</p>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -227,19 +243,19 @@ function Contacts() {
                     {isFetching ? (
                         <Loader2 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-500 animate-spin" size={20} />
                     ) : (
-                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-600 group-focus-within:text-indigo-500 transition-colors" size={20} />
                     )}
                     <input
                         type="text"
                         placeholder="Search name, email, company, or position..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-700 placeholder:text-slate-400 shadow-sm"
+                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 dark:focus:border-indigo-600 transition-all font-medium text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-sm"
                     />
                 </div>
                 <button
                     onClick={() => setShowFilters(true)}
-                    className={`btn-secondary flex items-center gap-2 border-slate-200 px-6 ${Object.values(activeFilters).some(v => v !== '') ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : ''
+                    className={`btn-secondary flex items-center gap-2 border-slate-200 dark:border-slate-800 px-6 ${Object.values(activeFilters).some(v => v !== '') ? 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/40 text-indigo-600 dark:text-indigo-400' : ''
                         }`}
                 >
                     <Filter size={18} />
@@ -291,16 +307,16 @@ function Contacts() {
 
             {/* Modal Form */}
             {showForm && isAdmin && (
-                <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col scale-in-center">
-                        <div className="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
+                <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col scale-in-center border dark:border-slate-800">
+                        <div className="px-8 py-6 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
                             <div>
-                                <h2 className="text-2xl font-extrabold text-slate-900">
+                                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
                                     {editingContact ? 'Refine Contact' : 'Create New Entry'}
                                 </h2>
-                                <p className="text-sm text-slate-500 font-medium">Please provide accurate contact information.</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Please provide accurate contact information.</p>
                             </div>
-                            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors" onClick={() => setShowForm(false)}>
+                            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer transition-colors" onClick={() => setShowForm(false)}>
                                 <Plus className="rotate-45" size={24} />
                             </div>
                         </div>

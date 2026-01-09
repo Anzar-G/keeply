@@ -78,11 +78,11 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
     if (contacts.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-24 px-4 text-center">
-                <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center mb-6 text-slate-200">
+                <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mb-6 text-slate-200 dark:text-slate-700">
                     <UserPlus size={48} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-2xl font-extrabold text-slate-900 mb-2">Registry is empty</h3>
-                <p className="text-slate-500 max-w-sm mx-auto font-medium leading-relaxed">
+                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">Registry is empty</h3>
+                <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-medium leading-relaxed">
                     Begin building your professional database by adding your first contact entry above.
                 </p>
             </div>
@@ -94,24 +94,24 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-slate-50/50 border-b border-slate-100">
+                        <tr className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
                             <th className="p-6 w-12">
                                 <div className="flex items-center justify-center">
                                     <input
                                         type="checkbox"
-                                        className="rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500/20 h-5 w-5 bg-white cursor-pointer transition-all"
+                                        className="rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500/20 h-5 w-5 bg-white dark:bg-slate-900 cursor-pointer transition-all"
                                         checked={allSelected}
                                         onChange={handleSelectAll}
                                     />
                                 </div>
                             </th>
-                            <th className="p-6 text-xs font-bold text-slate-400 uppercase tracking-[0.15em]">Contact Info</th>
-                            <th className="p-6 text-xs font-bold text-slate-400 uppercase tracking-[0.15em] hidden lg:table-cell">Professional</th>
-                            <th className="p-6 text-xs font-bold text-slate-400 uppercase tracking-[0.15em] hidden xl:table-cell">Tags</th>
-                            <th className="p-6 text-right text-xs font-bold text-slate-400 uppercase tracking-[0.15em]">Meta</th>
+                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em]">Contact Info</th>
+                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] hidden lg:table-cell">Professional</th>
+                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] hidden xl:table-cell">Tags</th>
+                            <th className="p-6 text-right text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em]">Meta</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-50">
+                    <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
                         {contacts.map((contact) => {
                             const isSelected = selectedIds.includes(contact.id);
                             const initials = contact.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -119,13 +119,13 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                             return (
                                 <tr
                                     key={contact.id}
-                                    className={`group hover:bg-slate-50/50 transition-all duration-200 ${isSelected ? 'bg-indigo-50/30' : ''}`}
+                                    className={`group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-200 ${isSelected ? 'bg-indigo-50/30 dark:bg-indigo-500/10' : ''}`}
                                 >
                                     <td className="p-6">
                                         <div className="flex items-center justify-center">
                                             <input
                                                 type="checkbox"
-                                                className="rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500/20 h-5 w-5 bg-white cursor-pointer transition-all"
+                                                className="rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500/20 h-5 w-5 bg-white dark:bg-slate-900 cursor-pointer transition-all"
                                                 checked={isSelected}
                                                 onChange={() => handleSelectOne(contact.id)}
                                             />
@@ -133,29 +133,29 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                     </td>
                                     <td className="p-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-extrabold text-sm flex-shrink-0 shadow-sm">
+                                            <div className="h-12 w-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-extrabold text-sm flex-shrink-0 shadow-sm">
                                                 {initials}
                                             </div>
                                             <div className="min-w-0">
                                                 {isAdmin ? (
-                                                    <Link to={`/contacts/${contact.id}`} className="font-bold text-slate-900 truncate flex items-center gap-2 hover:text-indigo-600 transition-colors">
+                                                    <Link to={`/contacts/${contact.id}`} className="font-bold text-slate-900 dark:text-slate-100 truncate flex items-center gap-2 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                                                         {contact.name}
                                                         {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>}
                                                     </Link>
                                                 ) : (
-                                                    <div className="font-bold text-slate-900 truncate flex items-center gap-2">
+                                                    <div className="font-bold text-slate-900 dark:text-slate-100 truncate flex items-center gap-2">
                                                         {contact.name}
                                                         {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>}
                                                     </div>
                                                 )}
                                                 <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                                                        <Mail size={12} className="text-slate-300" />
+                                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                                        <Mail size={12} className="text-slate-300 dark:text-slate-700" />
                                                         {isAdmin ? contact.email : '••••••••@••••.•••'}
                                                     </div>
                                                     {contact.phone && (
-                                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                                                            <Phone size={12} className="text-slate-200" />
+                                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500">
+                                                            <Phone size={12} className="text-slate-200 dark:text-slate-800" />
                                                             {contact.phone}
                                                         </div>
                                                     )}
@@ -165,12 +165,12 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                     </td>
                                     <td className="p-6 hidden lg:table-cell">
                                         <div className="space-y-1">
-                                            <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700">
-                                                <Building2 size={14} className="text-slate-300" />
+                                            <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700 dark:text-slate-300">
+                                                <Building2 size={14} className="text-slate-300 dark:text-slate-700" />
                                                 {contact.company || 'Private'}
                                             </div>
-                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
-                                                <User size={12} className="text-slate-200" />
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500">
+                                                <User size={12} className="text-slate-200 dark:text-slate-800" />
                                                 {contact.position || 'Neutral'}
                                             </div>
                                         </div>
@@ -181,13 +181,13 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                                 contact.tags.map((tag, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-slate-100 text-slate-600 uppercase tracking-wider border border-slate-200/50"
+                                                        className="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 uppercase tracking-wider border border-slate-200/50 dark:border-slate-700/50"
                                                     >
                                                         {tag}
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-slate-300 text-sm italic font-medium">None</span>
+                                                <span className="text-slate-300 dark:text-slate-700 text-sm italic font-medium">None</span>
                                             )}
                                         </div>
                                     </td>
@@ -196,7 +196,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                             {onEdit && (
                                                 <button
                                                     onClick={() => onEdit(contact)}
-                                                    className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-white hover:shadow-md rounded-xl transition-all"
+                                                    className="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-600 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md dark:hover:shadow-indigo-500/10 rounded-xl transition-all"
                                                     title="Refine information"
                                                 >
                                                     <Edit2 size={16} />
@@ -205,7 +205,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                             {onDelete && (
                                                 <button
                                                     onClick={() => onDelete(contact.id)}
-                                                    className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-white hover:shadow-md rounded-xl transition-all"
+                                                    className="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md dark:hover:shadow-rose-500/10 rounded-xl transition-all"
                                                     title="Archive entry"
                                                 >
                                                     <Trash2 size={16} />

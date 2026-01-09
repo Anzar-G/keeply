@@ -152,11 +152,11 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                                                     <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{field.label} {field.required && <span className="text-rose-500">*</span>}</span>
                                                 </div>
                                                 <div className="flex items-center gap-3 flex-1 justify-end ml-4 max-w-[240px]">
-                                                    <ArrowRight size={16} className="text-slate-300" />
+                                                    <ArrowRight size={16} className="text-slate-300 dark:text-slate-700" />
                                                     <select
                                                         value={mapping[field.key] || ''}
                                                         onChange={(e) => setMapping(prev => ({ ...prev, [field.key]: e.target.value }))}
-                                                        className="flex-1 bg-slate-50 dark:bg-slate-900 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-indigo-500 py-2"
+                                                        className="flex-1 bg-slate-50 dark:bg-slate-900 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-indigo-500 py-2 dark:text-slate-300"
                                                     >
                                                         <option value="">Select Column...</option>
                                                         {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -209,16 +209,16 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                         {step >= 2 && (
                             <div className="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-2">
                                 <AlertTriangle size={14} className="text-amber-500" />
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Duplicate Strategy:</span>
+                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Duplicate Strategy:</span>
                                 <select
                                     id="duplicate-strategy-selector"
                                     value={duplicateStrategy}
                                     onChange={(e) => setDuplicateStrategy(e.target.value)}
-                                    className="bg-transparent border-none text-[10px] font-black text-indigo-600 uppercase tracking-widest focus:ring-0 p-0 cursor-pointer"
+                                    className="bg-transparent border-none text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest focus:ring-0 p-0 cursor-pointer"
                                 >
-                                    <option value="skip">Skip Existing Emails</option>
-                                    <option value="overwrite">Overwrite / Sync Data</option>
-                                    <option value="error">Strict (Stop on Error)</option>
+                                    <option value="skip" className="dark:bg-slate-900">Skip Existing Emails</option>
+                                    <option value="overwrite" className="dark:bg-slate-900">Overwrite / Sync Data</option>
+                                    <option value="error" className="dark:bg-slate-900">Strict (Stop on Error)</option>
                                 </select>
                             </div>
                         )}

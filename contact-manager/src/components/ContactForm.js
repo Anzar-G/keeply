@@ -3,8 +3,8 @@ import { User, Mail, Phone, Building2, Briefcase, Tag, FileText, X, Check } from
 
 const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", placeholder, error, rows }) => (
     <div className="space-y-1.5">
-        <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
-            <Icon size={12} className="text-slate-300" />
+        <label className="flex items-center gap-2 text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest px-1">
+            <Icon size={12} className="text-slate-300 dark:text-slate-700" />
             {label}
             {(label === 'Name' || label === 'Email') && <span className="text-rose-400">*</span>}
         </label>
@@ -14,7 +14,7 @@ const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", p
                 value={value}
                 onChange={onChange}
                 rows={rows}
-                className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-600 placeholder:text-slate-300 shadow-sm ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
+                className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-sm ${error ? 'border-rose-200 dark:border-rose-500/50 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 dark:border-slate-800 focus:ring-indigo-500/10 focus:border-indigo-400'
                     }`}
                 placeholder={placeholder}
             />
@@ -24,7 +24,7 @@ const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", p
                 name={name}
                 value={value}
                 onChange={onChange}
-                className={`w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-600 placeholder:text-slate-300 shadow-sm ${error ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 focus:ring-indigo-500/10 focus:border-indigo-400'
+                className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border rounded-xl focus:outline-none focus:ring-4 transition-all font-medium text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-sm ${error ? 'border-rose-200 dark:border-rose-500/50 focus:ring-rose-500/10 focus:border-rose-400' : 'border-slate-100 dark:border-slate-800 focus:ring-indigo-500/10 focus:border-indigo-400'
                     }`}
                 placeholder={placeholder}
             />
@@ -107,18 +107,18 @@ function ContactForm({ contact, onSubmit, onCancel }) {
 
             <InputField label="Additional Notes" icon={FileText} name="notes" value={formData.notes} onChange={handleChange} placeholder="Any relevant details about this contact..." rows={4} />
 
-            <div className="flex justify-end items-center gap-4 pt-4 border-t border-slate-50">
+            <div className="flex justify-end items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex items-center gap-2 px-6 py-2.5 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
+                    className="flex items-center gap-2 px-6 py-2.5 text-slate-400 dark:text-slate-500 font-bold text-sm hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 >
                     <X size={18} />
                     Discard Changes
                 </button>
                 <button
                     type="submit"
-                    className="btn-primary flex items-center gap-2 px-8 py-3 rounded-2xl shadow-lg shadow-indigo-100"
+                    className="btn-primary flex items-center gap-2 px-8 py-3 rounded-2xl shadow-lg shadow-indigo-100/20"
                 >
                     <Check size={18} />
                     {contact ? 'Update Registry' : 'Save Entry'}
