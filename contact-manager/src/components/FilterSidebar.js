@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Calendar, Building2, Tag, Users, RotateCcw } from 'lucide-react';
+import { X, Calendar, Users, RotateCcw } from 'lucide-react';
 
 const FilterSidebar = ({
     isOpen,
@@ -70,35 +70,6 @@ const FilterSidebar = ({
                         </div>
                     </div>
 
-                    {/* Company Filter */}
-                    <div className="space-y-3">
-                        <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-1">
-                            <Building2 size={12} className="text-slate-300 dark:text-slate-700" />
-                            Perusahaan
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="Cari berdasarkan nama perusahaan..."
-                            value={filters.company}
-                            onChange={(e) => onFilterChange('company', e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all font-bold text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-sm text-sm"
-                        />
-                    </div>
-
-                    {/* Tags Filter */}
-                    <div className="space-y-3">
-                        <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-1">
-                            <Tag size={12} className="text-slate-300 dark:text-slate-700" />
-                            Tag Registri
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="Contoh: VIP, Partner, Lead..."
-                            value={filters.tag}
-                            onChange={(e) => onFilterChange('tag', e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all font-bold text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-sm text-sm"
-                        />
-                    </div>
 
                     {/* Date Filter */}
                     <div className="space-y-3">

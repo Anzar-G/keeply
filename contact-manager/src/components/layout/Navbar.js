@@ -1,5 +1,5 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { Bell, Search, Menu, CheckCheck, LogOut, Sun, Moon, Command } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, Menu, CheckCheck, LogOut, Sun, Moon } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -7,33 +7,19 @@ import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { useNavigate } from 'react-router-dom';
 
 function Navbar({ toggleSidebar, isMobile }) {
-    const [showNotifications, setShowNotifications] = useState(false);
-    const { notifications, unreadCount, markAllAsRead } = useNotification();
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
-    const searchRef = useRef(null);
 
-    const shortcuts = useMemo(() => ({
-        'k': () => searchRef.current?.focus()
-    }), []);
-
-    useKeyboardShortcuts(shortcuts);
+    useKeyboardShortcuts({});
 
     const handleLogout = () => {
         logout();
         navigate('/');
     };
 
-    const [topSearch, setTopSearch] = useState('');
-
-    const handleGlobalSearch = (e) => {
-        e.preventDefault();
-        if (topSearch.trim()) {
-            navigate(`/contacts?search=${encodeURIComponent(topSearch.trim())}`);
-            setTopSearch('');
-        }
-    };
+    const [showNotifications, setShowNotifications] = useState(false);
+    const { notifications, unreadCount, markAllAsRead } = useNotification();
 
     return (
         <nav className="h-16 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800/60 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between w-full transition-all duration-300">
@@ -45,25 +31,6 @@ function Navbar({ toggleSidebar, isMobile }) {
                 >
                     <Menu size={24} />
                 </button>
-
-                <form
-                    onSubmit={handleGlobalSearch}
-                    className="hidden md:flex items-center gap-2 text-gray-400 dark:text-slate-500 bg-gray-50 dark:bg-slate-950 px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-800 w-96 focus-within:ring-2 focus-within:ring-indigo-500/20 dark:focus-within:ring-indigo-500/10 focus-within:border-indigo-400 dark:focus-within:border-indigo-600 transition-all group"
-                >
-                    <Search size={18} className="group-focus-within:text-indigo-500 transition-colors" />
-                    <input
-                        ref={searchRef}
-                        type="text"
-                        placeholder="Cari apa saja..."
-                        value={topSearch}
-                        onChange={(e) => setTopSearch(e.target.value)}
-                        className="bg-transparent border-none outline-none text-sm text-gray-700 dark:text-slate-200 w-full placeholder-gray-400 dark:placeholder-slate-600"
-                    />
-                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-[10px] font-bold text-gray-400 dark:text-slate-600 shadow-sm opacity-60 group-hover:opacity-100 transition-opacity">
-                        <Command size={10} />
-                        <span>K</span>
-                    </div>
-                </form>
             </div>
 
             {/* Right side: Notifications & Profile */}

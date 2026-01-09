@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ContactList from '../components/ContactList';
 import ContactForm from '../components/ContactForm';
-import { Plus, Search, Loader2, Filter, Download, RefreshCw, FileText } from 'lucide-react';
+import { Plus, Loader2, Filter, Download, RefreshCw, FileText } from 'lucide-react';
 import { contactAPI, groupAPI } from '../services/api';
 import FilterSidebar from '../components/FilterSidebar';
 import toast from 'react-hot-toast';
@@ -14,13 +14,9 @@ import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 function Contacts() {
     const [searchParams, setSearchParams] = useSearchParams();
     const groupParam = searchParams.get('group') || '';
-    const searchParam = searchParams.get('search') || '';
-
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true); // Only for initial load
     const [isFetching, setIsFetching] = useState(false); // For search/filter updates
-    const [searchQuery, setSearchQuery] = useState(searchParam);
-    const [debouncedSearch, setDebouncedSearch] = useState(searchParam);
     const [showForm, setShowForm] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
     const [editingContact, setEditingContact] = useState(null);
@@ -52,13 +48,6 @@ function Contacts() {
 
     useKeyboardShortcuts(shortcuts);
 
-    // Debounce search query
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedSearch(searchQuery);
-        }, 500);
-        return () => clearTimeout(handler);
-    }, [searchQuery]);
 
     useEffect(() => {
         if (groupParam !== activeFilters.group) {
@@ -66,13 +55,6 @@ function Contacts() {
         }
     }, [groupParam, activeFilters.group]);
 
-    useEffect(() => {
-        const query = searchParams.get('search') || '';
-        if (query !== searchQuery) {
-            setSearchQuery(query);
-            setDebouncedSearch(query);
-        }
-    }, [searchParams, searchQuery]);
 
     const { addNotification } = useNotification();
 
@@ -82,8 +64,7 @@ function Contacts() {
             else setIsFetching(true);
 
             const params = {
-                ...activeFilters,
-                search: debouncedSearch
+                ...activeFilters
             };
             const data = await contactAPI.getAll(params);
             setContacts(data);
@@ -94,7 +75,7 @@ function Contacts() {
             setLoading(false);
             setIsFetching(false);
         }
-    }, [activeFilters, debouncedSearch]);
+    }, [activeFilters]);
 
     const loadGroups = useCallback(async () => {
         try {
@@ -108,13 +89,13 @@ function Contacts() {
     // Pemuatan Awal - Hanya dijalankan SEKALI saat komponen dimuat
     useEffect(() => {
         const initialLoad = async () => {
-            await loadGroups();
-            // Cek apakah ada parameter pencarian di URL saat pertama kali buka
-            const currentSearch = searchParams.get('search') || '';
             try {
                 setLoading(true);
-                const data = await contactAPI.getAll({ ...activeFilters, search: currentSearch });
+                await loadGroups();
+                const data = await contactAPI.getAll({ ...activeFilters });
                 setContacts(data);
+            } catch (error) {
+                console.error('Initial load failed:', error);
             } finally {
                 setLoading(false);
             }
@@ -129,7 +110,7 @@ function Contacts() {
         if (!loading) {
             loadContacts(false);
         }
-    }, [debouncedSearch, activeFilters, loadContacts, loading, searchQuery]);
+    }, [activeFilters, loadContacts, loading]);
 
     const handleAddContact = async (formData) => {
         try {
@@ -263,24 +244,7 @@ function Contacts() {
                 </div>
             </div>
 
-            {/* Area Toolbar */}
             <div className="flex flex-col sm:flex-row gap-4 print:hidden">
-                <div className="relative flex-1 group">
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5">
-                        {isFetching ? (
-                            <Loader2 className="text-indigo-500 animate-spin" size={20} />
-                        ) : (
-                            <Search className="text-slate-400 dark:text-slate-600 group-focus-within:text-indigo-500 transition-colors" size={20} />
-                        )}
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Cari nama, email, perusahaan, atau jabatan..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="input-premium pl-12"
-                    />
-                </div>
                 <button
                     onClick={() => setShowFilters(true)}
                     className={`btn-secondary flex items-center gap-2 px-6 ${Object.values(activeFilters).some(v => v !== '') ? 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/40 text-indigo-600 dark:text-indigo-400' : ''
@@ -312,8 +276,6 @@ function Contacts() {
                         dateFrom: '',
                         dateTo: ''
                     });
-                    setSearchQuery('');
-                    setDebouncedSearch('');
                     setSearchParams({});
                 }}
             />
