@@ -17,7 +17,9 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
         { key: 'email', label: 'Email Address', required: true },
         { key: 'phone', label: 'Phone Number', required: false },
         { key: 'company', label: 'Company', required: false },
-        { key: 'group_id', label: 'Group', required: false },
+        { key: 'position', label: 'Job Position', required: false },
+        { key: 'notes', label: 'Special Notes', required: false },
+        { key: 'group_id', label: 'Group ID', required: false },
     ];
 
     const handleFileUpload = (e) => {
