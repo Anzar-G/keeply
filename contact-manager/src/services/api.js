@@ -67,6 +67,18 @@ export const contactAPI = {
     bulkCreate: async (contacts) => {
         const response = await api.post('/contacts/bulk', { contacts });
         return response.data;
+    },
+    getNotes: async (id) => {
+        const response = await api.get(`/contacts/${id}/notes`);
+        return response.data;
+    },
+    addNote: async (id, content) => {
+        const response = await api.post(`/contacts/${id}/notes`, { content });
+        return response.data;
+    },
+    getTimeline: async (id) => {
+        const response = await api.get(`/contacts/${id}/timeline`);
+        return response.data;
     }
 };
 

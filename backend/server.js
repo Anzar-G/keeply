@@ -56,9 +56,28 @@ const initDb = async () => {
             CREATE TABLE IF NOT EXISTS activity_logs (
                 id VARCHAR(255) PRIMARY KEY,
                 user_id VARCHAR(255),
+                contact_id VARCHAR(255),
                 action VARCHAR(100) NOT NULL,
                 details TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Migration: ensure contact_id exists if table was already created
+        try {
+            await pool.query('ALTER TABLE activity_logs ADD COLUMN IF NOT EXISTS contact_id VARCHAR(255)');
+        } catch (e) {
+            // Log column existence error if any, ignore otherwise
+        }
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS contact_notes (
+                id VARCHAR(255) PRIMARY KEY,
+                contact_id VARCHAR(255) REFERENCES contacts(id) ON DELETE CASCADE,
+                user_id VARCHAR(255) REFERENCES users(id),
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
 
@@ -119,12 +138,12 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Helper function to log activity
-const logActivity = async (userId, action, details) => {
+const logActivity = async (userId, action, details, contactId = null) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
     try {
         await pool.query(
-            'INSERT INTO activity_logs (id, user_id, action, details) VALUES ($1, $2, $3, $4)',
-            [id, userId, action, JSON.stringify(details || {})]
+            'INSERT INTO activity_logs (id, user_id, contact_id, action, details) VALUES ($1, $2, $3, $4, $5)',
+            [id, userId, contactId, action, JSON.stringify(details || {})]
         );
     } catch (err) {
         console.error('❌ Failed to log activity:', err);
@@ -334,23 +353,111 @@ app.get('/api/contacts', async (req, res) => {
     }
 });
 
-// GET single contact
-app.get('/api/contacts/:id', async (req, res) => {
+// GET single contact with Group info
+app.get('/api/contacts/:id', authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
-        const { rows } = await pool.query('SELECT * FROM contacts WHERE id = $1', [id]);
-        const row = rows[0];
+        const { rows } = await pool.query(`
+            SELECT c.*, g.id as group_id, g.name as group_name, g.color as group_color
+            FROM contacts c
+            LEFT JOIN contact_group_members cgm ON c.id = cgm.contact_id
+            LEFT JOIN contact_groups g ON cgm.group_id = g.id
+            WHERE c.id = $1
+        `, [id]);
 
-        if (!row) {
+        if (rows.length === 0) {
             return res.status(404).json({ error: 'Contact not found' });
         }
 
+        const row = rows[0];
         res.json({
             ...row,
-            tags: row.tags ? JSON.parse(row.tags) : []
+            tags: row.tags ? JSON.parse(row.tags) : [],
+            group: row.group_id ? { id: row.group_id, name: row.group_name, color: row.group_color } : null
         });
     } catch (error) {
+        console.error('Fetch Contact Error:', error);
         res.status(500).json({ error: 'Failed to fetch contact' });
+    }
+});
+
+// GET contact notes
+app.get('/api/contacts/:id/notes', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { rows } = await pool.query(`
+            SELECT n.*, u.username as creator_name 
+            FROM contact_notes n
+            LEFT JOIN users u ON n.user_id = u.id
+            WHERE n.contact_id = $1
+            ORDER BY n.created_at DESC
+        `, [id]);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch notes' });
+    }
+});
+
+// POST create contact note
+app.post('/api/contacts/:id/notes', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { content } = req.body;
+        if (!content) return res.status(400).json({ error: 'Content is required' });
+
+        const noteId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        await pool.query(
+            'INSERT INTO contact_notes (id, contact_id, user_id, content) VALUES ($1, $2, $3, $4)',
+            [noteId, id, req.user.userId, content]
+        );
+
+        // Fetch the created note with creator info
+        const { rows } = await pool.query(`
+            SELECT n.*, u.username as creator_name 
+            FROM contact_notes n
+            LEFT JOIN users u ON n.user_id = u.id
+            WHERE n.id = $1
+        `, [noteId]);
+
+        logActivity(req.user.userId, 'ADD_NOTE', { contact_id: id }, id);
+        res.status(201).json(rows[0]);
+    } catch (error) {
+        console.error('Note Creation Error:', error);
+        res.status(500).json({ error: 'Failed to add note' });
+    }
+});
+
+// GET contact timeline (Combined Activities and Notes)
+app.get('/api/contacts/:id/timeline', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Fetch activities filtered for this contact
+        const { rows: activities } = await pool.query(`
+            SELECT a.*, u.username as actor_name, 'activity' as type
+            FROM activity_logs a
+            LEFT JOIN users u ON a.user_id = u.id
+            WHERE a.contact_id = $1 OR a.details LIKE $2
+            ORDER BY a.created_at DESC
+        `, [id, `%${id}%`]);
+
+        const { rows: notes } = await pool.query(`
+            SELECT n.*, u.username as actor_name, 'note' as type
+            FROM contact_notes n
+            LEFT JOIN users u ON n.user_id = u.id
+            WHERE n.contact_id = $1
+            ORDER BY n.created_at DESC
+        `, [id]);
+
+        // Combine and sort
+        const timeline = [...activities, ...notes].sort((a, b) =>
+            new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        res.json(timeline);
+    } catch (error) {
+        console.error('Timeline Fetch Error:', error);
+        res.status(500).json({ error: 'Failed to fetch timeline' });
     }
 });
 
@@ -397,12 +504,7 @@ app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req,
             }
 
             // Log activity
-            const activityId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-            await client.query(
-                `INSERT INTO activity_logs (id, user_id, action, details) 
-                 VALUES ($1, $2, $3, $4)`,
-                [activityId, req.user.id, 'CREATE_CONTACT', JSON.stringify({ name, email, source: 'bulk_import' })]
-            );
+            logActivity(req.user.userId, 'CREATE_CONTACT', { name, email, source: 'bulk_import' }, id);
 
             insertedContacts.push(rows[0]);
         }
@@ -446,7 +548,7 @@ app.post('/api/contacts', authMiddleware, roleCheck(['admin']), async (req, res)
         logActivity(req.user.userId, 'CREATE_CONTACT', {
             name: contactData.name,
             email: contactData.email
-        });
+        }, id);
 
         res.status(201).json(contactData);
     } catch (err) {
@@ -487,7 +589,7 @@ app.put('/api/contacts/:id', authMiddleware, roleCheck(['admin']), async (req, r
         logActivity(req.user.userId, 'UPDATE_CONTACT', {
             id,
             name: contactData.name
-        });
+        }, id);
 
         res.json(contactData);
     } catch (err) {
@@ -508,7 +610,7 @@ app.delete('/api/contacts/:id', authMiddleware, roleCheck(['admin']), async (req
         }
 
         // Log activity
-        logActivity(req.user.userId, 'DELETE_CONTACT', { id });
+        logActivity(req.user.userId, 'DELETE_CONTACT', { id }, id);
 
         res.json({ message: 'Contact deleted successfully' });
     } catch (err) {

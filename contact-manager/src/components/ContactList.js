@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone, FolderPlus, ChevronUp } from 'lucide-react';
 import { contactAPI } from '../services/api';
 import toast from 'react-hot-toast';
@@ -136,10 +137,10 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                                 {initials}
                                             </div>
                                             <div className="min-w-0">
-                                                <div className="font-bold text-slate-900 truncate flex items-center gap-2">
+                                                <Link to={`/contacts/${contact.id}`} className="font-bold text-slate-900 truncate flex items-center gap-2 hover:text-indigo-600 transition-colors">
                                                     {contact.name}
                                                     {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>}
-                                                </div>
+                                                </Link>
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                                                         <Mail size={12} className="text-slate-300" />

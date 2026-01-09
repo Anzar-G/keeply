@@ -5,6 +5,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Contacts from './pages/Contacts';
+import ContactDetail from './pages/ContactDetail';
 import Activities from './pages/Activities';
 import Login from './pages/Login';
 import { Loader2 } from 'lucide-react';
@@ -37,6 +38,7 @@ function App() {
                         {/* Public Routes */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/" element={<Layout><Contacts /></Layout>} />
+                        <Route path="/contacts/:id" element={<Layout><ContactDetail /></Layout>} />
                         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
 
                         {/* Admin Only Routes */}
