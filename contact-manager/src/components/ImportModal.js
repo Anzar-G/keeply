@@ -11,6 +11,7 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
     const [headers, setHeaders] = useState([]);
     const [mapping, setMapping] = useState({});
     const [importing, setImporting] = useState(false);
+    const [duplicateStrategy, setDuplicateStrategy] = useState('skip'); // skip, overwrite, error
 
     const systemFields = [
         { key: 'name', label: 'Contact Name', required: true },
@@ -69,9 +70,8 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                 });
                 return contact;
             });
-
-            await contactAPI.bulkCreate(formattedContacts);
-            toast.success(`Successfully imported ${formattedContacts.length} contacts`);
+            const response = await contactAPI.bulkCreate(formattedContacts, duplicateStrategy);
+            toast.success(`Integration Complete: ${response.length} records processed.`);
             onImportSuccess();
             onClose();
         } catch (error) {
@@ -205,9 +205,27 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
 
                 {/* Footer */}
                 <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/50 sticky bottom-0 z-10">
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <AlertTriangle size={14} className="text-amber-500" />
-                        <span>Unmapped fields will be bypassed by the ingestion engine.</span>
+                    <div className="flex flex-col gap-1 items-start">
+                        {step >= 2 && (
+                            <div className="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-2">
+                                <AlertTriangle size={14} className="text-amber-500" />
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Duplicate Strategy:</span>
+                                <select
+                                    id="duplicate-strategy-selector"
+                                    value={duplicateStrategy}
+                                    onChange={(e) => setDuplicateStrategy(e.target.value)}
+                                    className="bg-transparent border-none text-[10px] font-black text-indigo-600 uppercase tracking-widest focus:ring-0 p-0 cursor-pointer"
+                                >
+                                    <option value="skip">Skip Existing Emails</option>
+                                    <option value="overwrite">Overwrite / Sync Data</option>
+                                    <option value="error">Strict (Stop on Error)</option>
+                                </select>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 italic">
+                            <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                            <span>Unmapped fields will be bypassed by the ingestion engine.</span>
+                        </div>
                     </div>
                     <div className="flex items-center gap-4">
                         <button onClick={onClose} className="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">

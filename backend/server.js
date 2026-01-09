@@ -463,7 +463,7 @@ app.get('/api/contacts/:id/timeline', authMiddleware, async (req, res) => {
 
 // Bulk Create Contacts (Admin only)
 app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req, res) => {
-    const { contacts } = req.body;
+    const { contacts, strategy = 'error' } = req.body;
 
     if (!Array.isArray(contacts) || contacts.length === 0) {
         return res.status(400).json({ error: 'At least one contact is required' });
@@ -475,38 +475,65 @@ app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req,
         await client.query('BEGIN');
 
         const insertedContacts = [];
-        console.log('📦 Bulk Ingestion Started for', contacts.length, 'records');
+        console.log(`📦 Bulk Ingestion Started: ${contacts.length} records | Strategy: ${strategy}`);
+
         for (const contact of contacts) {
             const { name, email, phone, company, position, tags, notes, group_id } = contact;
-            console.log(` -> Processing: ${name} (${email}) | Group: ${group_id}`);
 
             if (!name || !email) {
                 throw new Error('Name and email are required for all contacts');
             }
 
-            // Generate unique ID (consistent with single create)
+            // Strategy: Skip
+            if (strategy === 'skip') {
+                const { rows: existing } = await client.query('SELECT id FROM contacts WHERE email = $1', [email]);
+                if (existing.length > 0) {
+                    console.log(` -> Skipping existing email: ${email}`);
+                    continue;
+                }
+            }
+
             const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
             const tagsJSON = JSON.stringify(tags || []);
 
-            const { rows } = await client.query(
-                `INSERT INTO contacts (id, name, email, phone, company, position, tags, notes) 
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-                 RETURNING *`,
-                [id, name, email, phone || '', company || '', position || '', tagsJSON, notes || '']
-            );
+            let query = `
+                INSERT INTO contacts (id, name, email, phone, company, position, tags, notes) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `;
+            let params = [id, name, email, phone || '', company || '', position || '', tagsJSON, notes || ''];
 
-            // Handle group association if group_id is provided
+            if (strategy === 'overwrite') {
+                query += `
+                    ON CONFLICT (email) 
+                    DO UPDATE SET 
+                        name = EXCLUDED.name,
+                        phone = EXCLUDED.phone,
+                        company = EXCLUDED.company,
+                        position = EXCLUDED.position,
+                        tags = EXCLUDED.tags,
+                        notes = EXCLUDED.notes,
+                        updated_at = CURRENT_TIMESTAMP
+                    RETURNING *
+                `;
+            } else {
+                query += ` RETURNING *`;
+            }
+
+            const { rows } = await client.query(query, params);
+            const finalContact = rows[0];
+
+            // Handle group association (only if it's a new association or overwriting)
             if (group_id) {
                 await client.query(
-                    'INSERT INTO contact_group_members (contact_id, group_id) VALUES ($1, $2)',
-                    [id, group_id]
+                    'INSERT INTO contact_group_members (contact_id, group_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+                    [finalContact.id, group_id]
                 );
             }
 
             // Log activity
-            logActivity(req.user.userId, 'CREATE_CONTACT', { name, email, source: 'bulk_import' }, id);
+            logActivity(req.user.userId, 'CREATE_CONTACT', { name, email, source: 'bulk_import', strategy }, finalContact.id);
 
-            insertedContacts.push(rows[0]);
+            insertedContacts.push(finalContact);
         }
 
         await client.query('COMMIT');
@@ -524,9 +551,14 @@ app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req,
 app.post('/api/contacts', authMiddleware, roleCheck(['admin']), async (req, res) => {
     try {
         const { name, email, phone, company, position, tags, notes } = req.body;
-
         if (!name || !email) {
             return res.status(400).json({ error: 'Name and email are required' });
+        }
+
+        // Check for duplicate email manually for better error message
+        const { rows: existing } = await pool.query('SELECT id FROM contacts WHERE email = $1', [email]);
+        if (existing.length > 0) {
+            return res.status(409).json({ error: 'A contact with this email already exists in your registry.' });
         }
 
         const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -565,6 +597,12 @@ app.put('/api/contacts/:id', authMiddleware, roleCheck(['admin']), async (req, r
     try {
         const { id } = req.params;
         const { name, email, phone, company, position, tags, notes } = req.body;
+
+        // Check for duplicate email (excluding self)
+        const { rows: existing } = await pool.query('SELECT id FROM contacts WHERE email = $1 AND id != $2', [email, id]);
+        if (existing.length > 0) {
+            return res.status(409).json({ error: 'This email is already associated with another contact.' });
+        }
 
         const tagsJSON = JSON.stringify(tags || []);
 

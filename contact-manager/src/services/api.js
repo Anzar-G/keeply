@@ -64,8 +64,8 @@ export const contactAPI = {
         const response = await api.post('/contacts/bulk-group', { contactIds, groupId });
         return response.data;
     },
-    bulkCreate: async (contacts) => {
-        const response = await api.post('/contacts/bulk', { contacts });
+    bulkCreate: async (contacts, strategy = 'error') => {
+        const response = await api.post('/contacts/bulk', { contacts, strategy });
         return response.data;
     },
     getNotes: async (id) => {
