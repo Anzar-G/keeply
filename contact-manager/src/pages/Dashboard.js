@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Users, TrendingUp, Building2, UserPlus, Loader2, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Users, TrendingUp, Building2, UserPlus, Loader2, ArrowUpRight, ArrowDownRight, RefreshCw, FileText } from 'lucide-react';
 import { contactAPI } from '../services/api';
+import toast from 'react-hot-toast';
 
 const StatCard = ({ title, value, change, icon: Icon, color, isNegative, percentage }) => (
     <div className="premium-card p-6 flex flex-col justify-between group">
@@ -34,45 +35,70 @@ const Dashboard = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const contacts = await contactAPI.getAll();
-                const total = contacts.length;
-                const now = new Date();
-                const thisMonth = contacts.filter(c => {
-                    const d = new Date(c.created_at);
-                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                }).length;
-
-                const uniqueCompanies = new Set(contacts.map(c => c.company).filter(Boolean)).size;
-
-                // Calculate real percentages
-                const lastMonthDate = new Date();
-                lastMonthDate.setMonth(now.getMonth() - 1);
-                const lastMonthContacts = contacts.filter(c => {
-                    const d = new Date(c.created_at);
-                    return d < lastMonthDate;
-                }).length;
-
-                const growthPct = lastMonthContacts === 0 ? (total > 0 ? 100 : 0) : (((total - lastMonthContacts) / lastMonthContacts) * 100).toFixed(1);
-
-                setStats({
-                    totalContacts: total,
-                    newThisMonth: thisMonth,
-                    companies: uniqueCompanies,
-                    growthPct: growthPct,
-                    recentActivity: contacts.slice(0, 5)
-                });
-            } catch (error) {
-                console.error('Failed to load dashboard stats', error);
-            } finally {
-                setLoading(false);
+    const fetchStats = useCallback(async (isManual = false) => {
+        try {
+            if (isManual) {
+                toast.loading('Synchronizing engine...', { id: 'refresh-sync' });
+            } else {
+                setLoading(true);
             }
-        };
 
-        fetchStats();
+            const contacts = await contactAPI.getAll();
+            const total = contacts.length;
+            const now = new Date();
+            const thisMonth = contacts.filter(c => {
+                const d = new Date(c.created_at);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            }).length;
+
+            const uniqueCompanies = new Set(contacts.map(c => c.company).filter(Boolean)).size;
+
+            // Calculate real percentages
+            const lastMonthDate = new Date();
+            lastMonthDate.setMonth(now.getMonth() - 1);
+            const lastMonthContacts = contacts.filter(c => {
+                const d = new Date(c.created_at);
+                return d < lastMonthDate;
+            }).length;
+
+            const growthPct = lastMonthContacts === 0 ? (total > 0 ? 100 : 0) : (((total - lastMonthContacts) / lastMonthContacts) * 100).toFixed(1);
+
+            setStats({
+                totalContacts: total,
+                newThisMonth: thisMonth,
+                companies: uniqueCompanies,
+                growthPct: growthPct,
+                recentActivity: contacts.slice(0, 5)
+            });
+
+            if (isManual) {
+                toast.success('Engine synchronized.', { id: 'refresh-sync' });
+            }
+        } catch (error) {
+            console.error('Failed to load dashboard stats', error);
+            if (isManual) {
+                toast.error('Sync failed.', { id: 'refresh-sync' });
+            }
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchStats();
+    }, [fetchStats]);
+
+    const handleRefresh = () => {
+        fetchStats(true);
+    };
+
+    const handleDownloadPDF = () => {
+        const toastId = toast.loading('Preparing report...');
+        setTimeout(() => {
+            toast.dismiss(toastId);
+            window.print();
+        }, 1000);
+    };
 
     if (loading) {
         return (
@@ -93,11 +119,19 @@ const Dashboard = () => {
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Performance Overview</h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Monitor your registry's growth and relationship health.</p>
                 </div>
-                <div className="flex gap-2">
-                    <button className="btn-secondary px-5">
+                <div className="flex gap-2 print:hidden">
+                    <button
+                        onClick={handleDownloadPDF}
+                        className="btn-secondary px-5 flex items-center gap-2"
+                    >
+                        <FileText size={16} />
                         Download PDF
                     </button>
-                    <button className="btn-primary px-6 shadow-indigo-100">
+                    <button
+                        onClick={handleRefresh}
+                        className="btn-primary px-6 shadow-indigo-100 flex items-center gap-2"
+                    >
+                        <RefreshCw size={16} />
                         Refresh Engine
                     </button>
                 </div>
