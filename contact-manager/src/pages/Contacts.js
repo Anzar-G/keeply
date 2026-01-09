@@ -223,7 +223,7 @@ function Contacts() {
                     )}
                     <input
                         type="text"
-                        placeholder="Search name or ID..."
+                        placeholder="Search name, email, company, or position..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-700 placeholder:text-slate-400 shadow-sm"
@@ -256,6 +256,8 @@ function Contacts() {
                         dateFrom: '',
                         dateTo: ''
                     });
+                    setSearchQuery('');
+                    setDebouncedSearch('');
                     setSearchParams({});
                 }}
             />

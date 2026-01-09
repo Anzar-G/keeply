@@ -309,7 +309,7 @@ app.get('/api/contacts', async (req, res) => {
 
         if (company) {
             conditions.push('c.company ILIKE $' + (params.length + 1));
-            params.push(`${company}`);
+            params.push(`%${company}%`);
         }
 
         if (tag) {
@@ -323,14 +323,18 @@ app.get('/api/contacts', async (req, res) => {
         }
 
         if (dateTo) {
+            // Make dateTo inclusive of the entire day
             conditions.push('c.created_at <= $' + (params.length + 1));
-            params.push(dateTo);
+            params.push(`${dateTo} 23:59:59`);
         }
 
         if (search) {
             const searchPattern = `%${search}%`;
-            conditions.push('(c.name ILIKE $' + (params.length + 1) + ' OR c.email ILIKE $' + (params.length + 2) + ' OR c.company ILIKE $' + (params.length + 3) + ')');
-            params.push(searchPattern, searchPattern, searchPattern);
+            conditions.push('(c.name ILIKE $' + (params.length + 1) +
+                ' OR c.email ILIKE $' + (params.length + 2) +
+                ' OR c.company ILIKE $' + (params.length + 3) +
+                ' OR c.position ILIKE $' + (params.length + 4) + ')');
+            params.push(searchPattern, searchPattern, searchPattern, searchPattern);
         }
 
         if (conditions.length > 0) {
