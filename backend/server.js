@@ -297,7 +297,7 @@ app.get('/', (req, res) => {
 app.get('/api/contacts', async (req, res) => {
     try {
         const { company, tag, group, dateFrom, dateTo, search } = req.query;
-        let query = 'SELECT c.* FROM contacts c';
+        let query = 'SELECT DISTINCT c.* FROM contacts c';
         let params = [];
         let conditions = [];
 
@@ -313,7 +313,7 @@ app.get('/api/contacts', async (req, res) => {
         }
 
         if (tag) {
-            conditions.push('c.tags LIKE $' + (params.length + 1));
+            conditions.push('c.tags ILIKE $' + (params.length + 1));
             params.push(`%${tag}%`);
         }
 

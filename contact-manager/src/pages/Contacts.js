@@ -247,6 +247,10 @@ function Contacts() {
                 groups={groups}
                 onFilterChange={(key, value) => {
                     setActiveFilters(prev => ({ ...prev, [key]: value }));
+                    if (key === 'group') {
+                        if (value) setSearchParams({ group: value });
+                        else setSearchParams({});
+                    }
                 }}
                 onReset={() => {
                     setActiveFilters({
