@@ -368,8 +368,10 @@ app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req,
         await client.query('BEGIN');
 
         const insertedContacts = [];
+        console.log('📦 Bulk Ingestion Started for', contacts.length, 'records');
         for (const contact of contacts) {
             const { name, email, phone, company, position, tags, notes, group_id } = contact;
+            console.log(` -> Processing: ${name} (${email}) | Group: ${group_id}`);
 
             if (!name || !email) {
                 throw new Error('Name and email are required for all contacts');
