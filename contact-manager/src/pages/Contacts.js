@@ -13,12 +13,13 @@ import ImportModal from '../components/ImportModal';
 function Contacts() {
     const [searchParams, setSearchParams] = useSearchParams();
     const groupParam = searchParams.get('group') || '';
+    const searchParam = searchParams.get('search') || '';
 
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true); // Only for initial load
     const [isFetching, setIsFetching] = useState(false); // For search/filter updates
-    const [searchQuery, setSearchQuery] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [searchQuery, setSearchQuery] = useState(searchParam);
+    const [debouncedSearch, setDebouncedSearch] = useState(searchParam);
     const [showForm, setShowForm] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
     const [editingContact, setEditingContact] = useState(null);
@@ -45,6 +46,13 @@ function Contacts() {
             setActiveFilters(prev => ({ ...prev, group: groupParam }));
         }
     }, [groupParam, activeFilters.group]);
+
+    useEffect(() => {
+        if (searchParam !== searchQuery) {
+            setSearchQuery(searchParam);
+            setDebouncedSearch(searchParam);
+        }
+    }, [searchParam]);
 
     const { addNotification } = useNotification();
     const { isAdmin } = useAuth();

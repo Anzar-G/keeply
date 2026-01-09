@@ -15,6 +15,16 @@ function Navbar({ toggleSidebar, isMobile }) {
         navigate('/');
     };
 
+    const [topSearch, setTopSearch] = useState('');
+
+    const handleGlobalSearch = (e) => {
+        e.preventDefault();
+        if (topSearch.trim()) {
+            navigate(`/contacts?search=${encodeURIComponent(topSearch.trim())}`);
+            setTopSearch('');
+        }
+    };
+
     return (
         <nav className="h-16 bg-white border-b border-gray-200 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between w-full transition-all duration-300">
             {/* Left side: Mobile Toggle & Title */}
@@ -26,14 +36,19 @@ function Navbar({ toggleSidebar, isMobile }) {
                     <Menu size={24} />
                 </button>
 
-                <div className="hidden md:flex items-center gap-2 text-gray-400 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 w-96">
+                <form
+                    onSubmit={handleGlobalSearch}
+                    className="hidden md:flex items-center gap-2 text-gray-400 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 w-96 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400 transition-all"
+                >
                     <Search size={20} />
                     <input
                         type="text"
                         placeholder="Search anything..."
+                        value={topSearch}
+                        onChange={(e) => setTopSearch(e.target.value)}
                         className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder-gray-400"
                     />
-                </div>
+                </form>
             </div>
 
             {/* Right side: Notifications & Profile */}
