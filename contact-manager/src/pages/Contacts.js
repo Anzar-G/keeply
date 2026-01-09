@@ -192,10 +192,12 @@ function Contacts() {
                             Import
                         </button>
                     )}
-                    <button className="btn-secondary flex items-center gap-2">
-                        <Download size={18} />
-                        Export
-                    </button>
+                    {isAdmin && (
+                        <button className="btn-secondary flex items-center gap-2">
+                            <Download size={18} />
+                            Export
+                        </button>
+                    )}
                     {isAdmin && (
                         <button
                             onClick={() => {

@@ -38,7 +38,16 @@ function App() {
                         {/* Public Routes */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/" element={<Layout><Contacts /></Layout>} />
-                        <Route path="/contacts/:id" element={<Layout><ContactDetail /></Layout>} />
+                        <Route
+                            path="/contacts/:id"
+                            element={
+                                <RoleRoute role="admin">
+                                    <Layout>
+                                        <ContactDetail />
+                                    </Layout>
+                                </RoleRoute>
+                            }
+                        />
                         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
 
                         {/* Admin Only Routes */}
