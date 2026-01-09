@@ -38,11 +38,11 @@
 
 @layer components {
   .premium-card {
-    @apply bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgba(0, 0, 0, 0.04)] hover:shadow-lg transition-all duration-500 overflow-hidden;
+    @apply bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_#0000000a] hover:shadow-lg transition-all duration-500 overflow-hidden;
   }
 
   .dark .premium-card {
-    @apply bg-slate-900/40 border-slate-800/60 shadow-[0_20px_50px_rgba(0, 0, 0, 0.3)] backdrop-blur-xl;
+    @apply bg-slate-900/40 border-slate-800/60 shadow-[0_20px_50px_#0000004d] backdrop-blur-xl;
   }
 
   .nav-link-active {
