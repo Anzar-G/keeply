@@ -369,24 +369,37 @@ app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req,
 
         const insertedContacts = [];
         for (const contact of contacts) {
-            const { name, email, phone, company, group_id } = contact;
+            const { name, email, phone, company, position, tags, notes, group_id } = contact;
 
             if (!name || !email) {
                 throw new Error('Name and email are required for all contacts');
             }
 
+            // Generate unique ID (consistent with single create)
+            const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+            const tagsJSON = JSON.stringify(tags || []);
+
             const { rows } = await client.query(
-                `INSERT INTO contacts (name, email, phone, company, group_id) 
-                 VALUES ($1, $2, $3, $4, $5) 
+                `INSERT INTO contacts (id, name, email, phone, company, position, tags, notes) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
                  RETURNING *`,
-                [name, email, phone, company, group_id]
+                [id, name, email, phone || '', company || '', position || '', tagsJSON, notes || '']
             );
 
-            // Log activity for each contact (summarized in the logs)
+            // Handle group association if group_id is provided
+            if (group_id) {
+                await client.query(
+                    'INSERT INTO contact_group_members (contact_id, group_id) VALUES ($1, $2)',
+                    [id, group_id]
+                );
+            }
+
+            // Log activity
+            const activityId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
             await client.query(
-                `INSERT INTO activity_logs (action, actor, details) 
-                 VALUES ($1, $2, $3)`,
-                ['CREATE_CONTACT', req.user.id, JSON.stringify({ name, email, source: 'bulk_import' })]
+                `INSERT INTO activity_logs (id, user_id, action, details) 
+                 VALUES ($1, $2, $3, $4)`,
+                [activityId, req.user.id, 'CREATE_CONTACT', JSON.stringify({ name, email, source: 'bulk_import' })]
             );
 
             insertedContacts.push(rows[0]);
