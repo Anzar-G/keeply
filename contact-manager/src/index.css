@@ -22,7 +22,7 @@
   }
 
   .dark body {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-[#020617] text-slate-100;
   }
 
   h1,
@@ -38,19 +38,11 @@
 
 @layer components {
   .premium-card {
-    @apply bg-white rounded-2xl border border-slate-100 shadow-sm transition-all duration-300;
+    @apply bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0, 0, 0, 0.04)] hover:shadow-lg transition-all duration-500 overflow-hidden;
   }
 
   .dark .premium-card {
-    @apply bg-slate-900 border-slate-800 shadow-none;
-  }
-
-  .premium-card:hover {
-    @apply shadow-md border-slate-200;
-  }
-
-  .dark .premium-card:hover {
-    @apply border-indigo-500/30 bg-slate-800/80;
+    @apply bg-slate-900/40 border-slate-800/60 shadow-[0_20px_50px_rgba(0, 0, 0, 0.3)] backdrop-blur-xl;
   }
 
   .nav-link-active {
@@ -58,27 +50,39 @@
   }
 
   .dark .nav-link-active {
-    @apply bg-indigo-500/10 text-indigo-400 border-indigo-500;
+    @apply bg-indigo-500/10 text-indigo-400 border-indigo-500/50;
   }
 
   .btn-primary {
-    @apply bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm hover:bg-indigo-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply bg-indigo-600 text-white px-6 py-2.5 rounded-2xl font-bold shadow-lg shadow-indigo-200/50 hover:bg-indigo-700 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2;
+  }
+
+  .dark .btn-primary {
+    @apply shadow-indigo-500/20;
   }
 
   .btn-secondary {
-    @apply border border-slate-200 bg-white text-slate-700 px-4 py-2.5 rounded-xl font-semibold hover:bg-slate-50 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply border border-slate-200 bg-white text-slate-700 px-6 py-2.5 rounded-2xl font-bold hover:bg-slate-50 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm;
   }
 
   .dark .btn-secondary {
-    @apply border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800;
+    @apply border-slate-800/80 bg-slate-900/50 text-slate-400 hover:bg-slate-800 hover:text-white backdrop-blur-md;
   }
 
   .glass-effect {
-    @apply backdrop-blur-md bg-white/70 border border-white/20;
+    @apply backdrop-blur-xl bg-white/70 border border-white/20;
   }
 
   .dark .glass-effect {
-    @apply bg-slate-900/70 border-white/5;
+    @apply bg-slate-950/60 border-slate-800/50;
+  }
+
+  .input-premium {
+    @apply w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-600 placeholder:text-slate-300 shadow-sm;
+  }
+
+  .dark .input-premium {
+    @apply bg-slate-950/50 border-slate-800 text-slate-300 placeholder:text-slate-700 focus:ring-indigo-500/5 focus:border-indigo-500/50 backdrop-blur-md;
   }
 }
 

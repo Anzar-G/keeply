@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Bell, Search, Menu, CheckCheck, LogOut, Sun, Moon, Command } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 import { useAuth } from '../../context/AuthContext';
@@ -34,7 +34,7 @@ function Navbar({ toggleSidebar, isMobile }) {
     };
 
     return (
-        <nav className="h-16 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between w-full transition-all duration-300">
+        <nav className="h-16 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800/60 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between w-full transition-all duration-300">
             {/* Left side: Mobile Toggle & Title */}
             <div className="flex items-center gap-4">
                 <button

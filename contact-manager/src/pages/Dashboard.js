@@ -8,17 +8,17 @@ const StatCard = ({ title, value, change, icon: Icon, color, isNegative, percent
             <div className={`p-2.5 rounded-xl shadow-sm ${color} transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-indigo-500/10`}>
                 <Icon size={20} className="text-white" />
             </div>
-            <div className={`flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${isNegative ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
+            <div className={`flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${isNegative ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                 }`}>
                 {isNegative ? <ArrowDownRight size={12} /> : <ArrowUpRight size={12} />}
                 {percentage}%
             </div>
         </div>
         <div className="mt-4">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{title}</p>
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{title}</p>
             <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{value}</h3>
-                <span className="text-[11px] font-semibold text-slate-400">total</span>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</h3>
+                <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-600">total</span>
             </div>
         </div>
     </div>
@@ -90,8 +90,8 @@ const Dashboard = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Performance Overview</h1>
-                    <p className="text-slate-500 mt-1 font-medium italic">Monitor your registry's growth and relationship health.</p>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Performance Overview</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Monitor your registry's growth and relationship health.</p>
                 </div>
                 <div className="flex gap-2">
                     <button className="btn-secondary px-5">
@@ -142,23 +142,23 @@ const Dashboard = () => {
                 <div className="lg:col-span-2 premium-card p-10 flex flex-col min-h-[420px] bg-white relative overflow-hidden">
                     <div className="flex justify-between items-center mb-10 relative z-10">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900">Growth Dynamic</h3>
-                            <p className="text-xs font-semibold text-slate-400 mt-0.5 tracking-tight">Real-time analytical trends</p>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Growth Dynamic</h3>
+                            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight">Real-time analytical trends</p>
                         </div>
-                        <div className="flex items-center gap-2 p-1 bg-slate-50 rounded-xl border border-slate-100">
-                            <button className="px-4 py-1.5 text-xs font-bold bg-white shadow-sm rounded-lg text-indigo-600 transition-all">Q1</button>
-                            <button className="px-4 py-1.5 text-xs font-bold text-slate-400 hover:text-slate-600 transition-all">Q2</button>
+                        <div className="flex items-center gap-2 p-1 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-100 dark:border-slate-800">
+                            <button className="px-4 py-1.5 text-xs font-bold bg-white dark:bg-slate-800 shadow-sm rounded-lg text-indigo-600 dark:text-indigo-400 transition-all">Q1</button>
+                            <button className="px-4 py-1.5 text-xs font-bold text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 transition-all">Q2</button>
                         </div>
                     </div>
 
-                    <div className="flex-1 bg-gradient-to-b from-slate-50/50 to-white rounded-[32px] flex items-center justify-center border border-slate-100 relative group overflow-hidden">
+                    <div className="flex-1 bg-gradient-to-b from-slate-50/50 to-white dark:from-slate-950/50 dark:to-[#020617] rounded-[32px] flex items-center justify-center border border-slate-100 dark:border-slate-800 relative group overflow-hidden">
                         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#4338ca_1px,transparent_1px)] [background-size:24px_24px]"></div>
                         <div className="text-center max-w-sm px-10 relative z-10">
-                            <div className="w-20 h-20 bg-white rounded-3xl shadow-xl shadow-slate-200/50 flex items-center justify-center mx-auto mb-6 border border-slate-50 transition-transform duration-700 group-hover:scale-105">
-                                <TrendingUp size={36} className="text-indigo-600" strokeWidth={1.5} />
+                            <div className="w-20 h-20 bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none flex items-center justify-center mx-auto mb-6 border border-slate-50 dark:border-slate-800 transition-transform duration-700 group-hover:scale-105">
+                                <TrendingUp size={36} className="text-indigo-600 dark:text-indigo-400" strokeWidth={1.5} />
                             </div>
-                            <h4 className="text-lg font-bold text-slate-800 mb-2">Analyzing Patterns...</h4>
-                            <p className="text-slate-400 text-sm font-medium leading-relaxed italic">Our processing engine is currently compiling historical contact data to generate high-fidelity growth projections.</p>
+                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">Analyzing Patterns...</h4>
+                            <p className="text-slate-400 dark:text-slate-500 text-sm font-medium leading-relaxed italic">Our processing engine is currently compiling historical contact data to generate high-fidelity growth projections.</p>
                         </div>
                     </div>
                 </div>
@@ -167,10 +167,10 @@ const Dashboard = () => {
                 <div className="premium-card p-8 bg-white border-slate-100 flex flex-col">
                     <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900">Recent Pulse</h3>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Status Updates</p>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Recent Pulse</h3>
+                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Status Updates</p>
                         </div>
-                        <button className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center transition-all border border-slate-100">
+                        <button className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 flex items-center justify-center transition-all border border-slate-100 dark:border-slate-800">
                             <ArrowUpRight size={16} />
                         </button>
                     </div>
@@ -183,16 +183,16 @@ const Dashboard = () => {
                                     {contact.name.charAt(0)}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold text-slate-900 truncate text-sm">{contact.name}</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate">{contact.company || 'Registry Entry'}</p>
+                                    <h4 className="font-bold text-slate-900 dark:text-slate-100 truncate text-sm">{contact.name}</h4>
+                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tight truncate">{contact.company || 'Registry Entry'}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[10px] font-extrabold text-slate-800 lowercase">
+                                    <p className="text-[10px] font-extrabold text-slate-800 dark:text-slate-400 lowercase">
                                         {new Date(contact.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                     </p>
                                     <div className="flex justify-end gap-0.5 mt-0.5">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-100"></div>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800"></div>
                                     </div>
                                 </div>
                             </div>

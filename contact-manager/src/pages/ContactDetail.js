@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
     Mail,
@@ -7,14 +7,12 @@ import {
     Building2,
     User,
     Calendar,
-    Clock,
     Plus,
     MessageSquare,
     History,
     Loader2,
     Save,
-    Tag,
-    Briefcase
+    Tag
 } from 'lucide-react';
 import { contactAPI } from '../services/api';
 import toast from 'react-hot-toast';
@@ -80,7 +78,7 @@ const ContactDetail = () => {
             <div className="flex justify-center items-center h-[60vh]">
                 <div className="text-center">
                     <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
-                    <p className="text-slate-500 font-bold tracking-tight">Accessing encrypted archives...</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-bold tracking-tight">Accessing encrypted archives...</p>
                 </div>
             </div>
         );
@@ -105,23 +103,23 @@ const ContactDetail = () => {
             <div className="flex items-center gap-4">
                 <button
                     onClick={() => navigate('/')}
-                    className="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 transition-all shadow-sm"
+                    className="h-10 w-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-indigo-600 transition-all shadow-sm"
                 >
                     <ArrowLeft size={20} />
                 </button>
                 <div className="flex-1">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">{contact.name}</h1>
+                        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{contact.name}</h1>
                         {contact.group && (
                             <span
-                                className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white"
+                                className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-500/10"
                                 style={{ backgroundColor: contact.group.color }}
                             >
                                 {contact.group.name}
                             </span>
                         )}
                     </div>
-                    <p className="text-slate-500 font-medium italic">Detailed intelligence profile and interaction history.</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium italic">Detailed intelligence profile and interaction history.</p>
                 </div>
             </div>
 
@@ -130,67 +128,67 @@ const ContactDetail = () => {
                 <div className="space-y-6">
                     <div className="premium-card p-8">
                         <div className="flex flex-col items-center text-center mb-8">
-                            <div className="h-24 w-24 rounded-3xl bg-indigo-50 border-4 border-white shadow-xl flex items-center justify-center text-indigo-600 font-black text-3xl mb-4">
+                            <div className="h-24 w-24 rounded-3xl bg-indigo-50 dark:bg-indigo-500/10 border-4 border-white dark:border-slate-800 shadow-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-black text-3xl mb-4">
                                 {initials}
                             </div>
-                            <h2 className="text-xl font-extrabold text-slate-900">{contact.name}</h2>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-tighter">{contact.position || 'Professional Contact'}</p>
+                            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{contact.name}</h2>
+                            <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter">{contact.position || 'Professional Contact'}</p>
                         </div>
 
-                        <div className="space-y-6 border-t border-slate-50 pt-8 text-sm">
+                        <div className="space-y-6 border-t border-slate-50 dark:border-slate-800/40 pt-8 text-sm">
                             <div className="flex items-center gap-4 group">
-                                <div className="h-10 w-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center shrink-0">
+                                <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center justify-center shrink-0 border border-slate-100 dark:border-slate-800">
                                     <Mail size={18} />
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="text-xs font-black text-slate-300 uppercase tracking-widest mb-0.5">Primary Email</p>
-                                    <p className="font-bold text-slate-700 truncate">{contact.email}</p>
+                                    <p className="text-xs font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest mb-0.5">Primary Email</p>
+                                    <p className="font-bold text-slate-700 dark:text-slate-300 truncate">{contact.email}</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4 group">
-                                <div className="h-10 w-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center shrink-0">
+                                <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center justify-center shrink-0 border border-slate-100 dark:border-slate-800">
                                     <Phone size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-slate-300 uppercase tracking-widest mb-0.5">Contact Line</p>
-                                    <p className="font-bold text-slate-700">{contact.phone || 'N/A'}</p>
+                                    <p className="text-xs font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest mb-0.5">Contact Line</p>
+                                    <p className="font-bold text-slate-700 dark:text-slate-300">{contact.phone || 'N/A'}</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4 group">
-                                <div className="h-10 w-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center shrink-0">
+                                <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center justify-center shrink-0 border border-slate-100 dark:border-slate-800">
                                     <Building2 size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-slate-300 uppercase tracking-widest mb-0.5">Organization</p>
-                                    <p className="font-bold text-slate-700">{contact.company || 'Private Entity'}</p>
+                                    <p className="text-xs font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest mb-0.5">Organization</p>
+                                    <p className="font-bold text-slate-700 dark:text-slate-300">{contact.company || 'Private Entity'}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="premium-card p-6 space-y-4">
-                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Metadata Visualization</h3>
+                        <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Metadata Visualization</h3>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/60">
                                 <div className="flex items-center gap-2">
-                                    <Tag size={14} className="text-slate-400" />
-                                    <span className="text-xs font-bold text-slate-600">Tags</span>
+                                    <Tag size={14} className="text-slate-400 dark:text-slate-600" />
+                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Tags</span>
                                 </div>
                                 <div className="flex gap-1">
                                     {contact.tags.map((t, i) => (
-                                        <span key={i} className="px-2 py-0.5 bg-white text-[9px] font-black uppercase text-indigo-600 rounded border border-indigo-100">{t}</span>
+                                        <span key={i} className="px-2 py-0.5 bg-white dark:bg-slate-800 text-[9px] font-black uppercase text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-900/50">{t}</span>
                                     ))}
-                                    {contact.tags.length === 0 && <span className="text-[10px] text-slate-400 italic">None</span>}
+                                    {contact.tags.length === 0 && <span className="text-[10px] text-slate-400 dark:text-slate-600 italic">None</span>}
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/60">
                                 <div className="flex items-center gap-2">
-                                    <Calendar size={14} className="text-slate-400" />
-                                    <span className="text-xs font-bold text-slate-600">Created</span>
+                                    <Calendar size={14} className="text-slate-400 dark:text-slate-600" />
+                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Created</span>
                                 </div>
-                                <span className="text-xs font-bold text-slate-500">{new Date(contact.created_at).toLocaleDateString()}</span>
+                                <span className="text-xs font-bold text-slate-500 dark:text-slate-500">{new Date(contact.created_at).toLocaleDateString()}</span>
                             </div>
                         </div>
                     </div>
@@ -203,8 +201,8 @@ const ContactDetail = () => {
                         <button
                             onClick={() => setActiveTab('timeline')}
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'timeline'
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none'
+                                : 'text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border border-transparent dark:hover:border-slate-800'
                                 }`}
                         >
                             <History size={16} />
@@ -213,8 +211,8 @@ const ContactDetail = () => {
                         <button
                             onClick={() => setActiveTab('notes')}
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'notes'
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none'
+                                : 'text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border border-transparent dark:hover:border-slate-800'
                                 }`}
                         >
                             <MessageSquare size={16} />
@@ -225,37 +223,37 @@ const ContactDetail = () => {
                     {/* Tab Panels */}
                     <div className="min-h-[500px]">
                         {activeTab === 'timeline' ? (
-                            <div className="relative pl-8 space-y-8 before:content-[''] before:absolute before:left-3.5 before:top-2 before:bottom-0 before:w-0.5 before:bg-slate-200">
+                            <div className="relative pl-8 space-y-8 before:content-[''] before:absolute before:left-3.5 before:top-2 before:bottom-0 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
                                 {timeline.map((item, i) => (
                                     <div key={i} className="relative group">
                                         {/* Timeline Node */}
-                                        <div className={`absolute -left-8 top-1.5 w-7 h-7 rounded-full border-4 border-white shadow-md flex items-center justify-center z-10 ${item.type === 'note' ? 'bg-amber-400 text-white' : 'bg-indigo-500 text-white'
+                                        <div className={`absolute -left-8 top-1.5 w-7 h-7 rounded-full border-4 border-white dark:border-slate-800 shadow-md flex items-center justify-center z-10 ${item.type === 'note' ? 'bg-amber-400 text-white' : 'bg-indigo-500 text-white'
                                             }`}>
                                             {item.type === 'note' ? <Plus size={12} /> : <History size={12} />}
                                         </div>
 
-                                        <div className="premium-card p-5 hover:border-indigo-200 transition-all">
+                                        <div className="premium-card p-5 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
-                                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest block mb-1">
+                                                    <span className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest block mb-1">
                                                         {new Date(item.created_at).toLocaleString()}
                                                     </span>
-                                                    <h4 className="text-sm font-extrabold text-slate-900 capitalize">
+                                                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 capitalize">
                                                         {item.type === 'note' ? 'New Contact Reflection' : item.action.replace('_', ' ').toLowerCase()}
                                                     </h4>
                                                 </div>
-                                                <div className="px-2 py-1 bg-slate-50 text-[10px] font-bold text-slate-500 rounded border border-slate-100 flex items-center gap-1">
+                                                <div className="px-2 py-1 bg-slate-50 dark:bg-slate-900 text-[10px] font-bold text-slate-500 dark:text-slate-600 rounded border border-slate-100 dark:border-slate-800 flex items-center gap-1">
                                                     <User size={10} />
                                                     {item.actor_name || 'System'}
                                                 </div>
                                             </div>
 
                                             {item.type === 'note' ? (
-                                                <div className="mt-3 p-3 bg-amber-50/30 border-l-4 border-amber-300 rounded text-sm text-slate-600 font-medium italic">
+                                                <div className="mt-3 p-3 bg-amber-50/30 dark:bg-amber-500/5 border-l-4 border-amber-300 dark:border-amber-600/50 rounded text-sm text-slate-600 dark:text-slate-400 font-medium italic">
                                                     "{item.content}"
                                                 </div>
                                             ) : (
-                                                <p className="text-sm text-slate-500 font-medium">
+                                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                                                     Performed via {item.details?.source || 'Registry System'}.
                                                 </p>
                                             )}
@@ -271,13 +269,13 @@ const ContactDetail = () => {
                         ) : (
                             <div className="space-y-6 animate-in fade-in duration-500">
                                 {/* Add Note Form */}
-                                <div className="premium-card p-6 border-2 border-indigo-100 shadow-indigo-50">
+                                <div className="premium-card p-6 border-2 border-indigo-100 dark:border-indigo-900 shadow-indigo-50 dark:shadow-none">
                                     <form onSubmit={handleAddNote}>
                                         <textarea
                                             value={newNote}
                                             onChange={(e) => setNewNote(e.target.value)}
                                             placeholder="Capture a private reflection or strategic note about this contact..."
-                                            className="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 min-h-[120px] transition-all resize-none mb-4"
+                                            className="w-full bg-slate-50 dark:bg-slate-900 border-none dark:border dark:border-slate-800 rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 min-h-[120px] transition-all resize-none mb-4"
                                         ></textarea>
                                         <div className="flex justify-end">
                                             <button
@@ -297,21 +295,21 @@ const ContactDetail = () => {
                                     {notes.map((note, i) => (
                                         <div key={i} className="premium-card p-6 relative group">
                                             <div className="flex justify-between items-start mb-4">
-                                                <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                                <div className="h-8 w-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/50">
                                                     <MessageSquare size={16} />
                                                 </div>
-                                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                                                <span className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">
                                                     {new Date(note.created_at).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                                            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                                                 {note.content}
                                             </p>
-                                            <div className="mt-6 pt-4 border-t border-slate-50 flex items-center gap-2">
-                                                <div className="w-5 h-5 rounded-md bg-slate-900 text-white text-[9px] font-black flex items-center justify-center">
+                                            <div className="mt-6 pt-4 border-t border-slate-50 dark:border-slate-800/40 flex items-center gap-2">
+                                                <div className="w-5 h-5 rounded-md bg-slate-900 dark:bg-indigo-600 text-white text-[9px] font-black flex items-center justify-center">
                                                     {note.creator_name ? note.creator_name[0].toUpperCase() : 'S'}
                                                 </div>
-                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">
                                                     Recorded by {note.creator_name || 'System'}
                                                 </span>
                                             </div>

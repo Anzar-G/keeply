@@ -34,14 +34,17 @@ const Sidebar = () => {
     };
 
     return (
-        <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-transform md:translate-x-0">
+        <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-slate-100 dark:border-slate-800/60 bg-white dark:bg-[#020617] transition-all duration-500 md:translate-x-0 shadow-[20px_0_40px_-20px_rgba(0,0,0,0.02)]">
             {/* Logo Area */}
-            <div className="flex h-20 items-center border-b border-slate-50 dark:border-slate-800/50 px-8">
+            <div className="flex h-20 items-center border-b border-slate-50 dark:border-slate-800/40 px-8 bg-white/50 dark:bg-slate-900/20 backdrop-blur-md">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 shadow-indigo-200 dark:shadow-none shadow-lg text-white">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 shadow-indigo-200 dark:shadow-indigo-500/20 shadow-lg text-white rotate-3 hover:rotate-0 transition-transform">
                         <Shield size={20} fill="currentColor" />
                     </div>
-                    <span className="font-extrabold text-xl text-slate-900 dark:text-slate-100 tracking-tight">Keeply<span className="text-indigo-600">.</span></span>
+                    <div>
+                        <span className="font-extrabold text-xl text-slate-900 dark:text-white tracking-tight leading-none block">Keeply<span className="text-indigo-600">.</span></span>
+                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Intelligence Pro</p>
+                    </div>
                 </div>
             </div>
 

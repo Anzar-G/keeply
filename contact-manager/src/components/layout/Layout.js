@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-transparent">
             <Toaster position="top-center" reverseOrder={false} />
             {/* Mobile Sidebar Overlay */}
             {isMobileMenuOpen && (

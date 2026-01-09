@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ContactList from '../components/ContactList';
 import ContactForm from '../components/ContactForm';
-import { Plus, Search, Loader2, Filter, Download } from 'lucide-react';
+import { Plus, Search, Loader2, Filter, Download, RefreshCw, FileText } from 'lucide-react';
 import { contactAPI, groupAPI } from '../services/api';
 import FilterSidebar from '../components/FilterSidebar';
 import toast from 'react-hot-toast';
@@ -65,9 +65,10 @@ function Contacts() {
     }, [groupParam, activeFilters.group]);
 
     useEffect(() => {
-        if (searchParam !== searchQuery) {
-            setSearchQuery(searchParam);
-            setDebouncedSearch(searchParam);
+        const query = searchParam.get('search') || '';
+        if (query !== searchQuery) {
+            setSearchQuery(query);
+            setDebouncedSearch(query);
         }
     }, [searchParam, searchQuery]);
 
@@ -186,6 +187,17 @@ function Contacts() {
     };
 
 
+    const handleRefresh = () => {
+        loadContacts(true);
+        loadGroups();
+        toast.success('Registry refreshed');
+    };
+
+    const handleExportPDF = () => {
+        window.print();
+    };
+
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-96">
@@ -200,13 +212,20 @@ function Contacts() {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             {/* Header section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 print:hidden">
                 <div>
                     <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Contact Registry</h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Manage and organize your professional network with precision.</p>
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleRefresh}
+                        className="btn-secondary h-11 w-11 !p-0 flex items-center justify-center"
+                        title="Refresh Engine"
+                    >
+                        <RefreshCw size={18} className={isFetching ? 'animate-spin text-indigo-500' : ''} />
+                    </button>
                     {isAdmin && (
                         <button
                             onClick={() => setShowImportModal(true)}
@@ -217,9 +236,13 @@ function Contacts() {
                         </button>
                     )}
                     {isAdmin && (
-                        <button className="btn-secondary flex items-center gap-2">
-                            <Download size={18} />
-                            Export
+                        <button
+                            onClick={handleExportPDF}
+                            className="btn-secondary flex items-center gap-2"
+                            title="Export PDF"
+                        >
+                            <FileText size={18} />
+                            Export PDF
                         </button>
                     )}
                     {isAdmin && (
@@ -238,24 +261,26 @@ function Contacts() {
             </div>
 
             {/* Toolbar Area */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 print:hidden">
                 <div className="relative flex-1 group">
-                    {isFetching ? (
-                        <Loader2 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-500 animate-spin" size={20} />
-                    ) : (
-                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-600 group-focus-within:text-indigo-500 transition-colors" size={20} />
-                    )}
+                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5">
+                        {isFetching ? (
+                            <Loader2 className="text-indigo-500 animate-spin" size={20} />
+                        ) : (
+                            <Search className="text-slate-400 dark:text-slate-600 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                        )}
+                    </div>
                     <input
                         type="text"
                         placeholder="Search name, email, company, or position..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 dark:focus:border-indigo-600 transition-all font-medium text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-sm"
+                        className="input-premium pl-12"
                     />
                 </div>
                 <button
                     onClick={() => setShowFilters(true)}
-                    className={`btn-secondary flex items-center gap-2 border-slate-200 dark:border-slate-800 px-6 ${Object.values(activeFilters).some(v => v !== '') ? 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/40 text-indigo-600 dark:text-indigo-400' : ''
+                    className={`btn-secondary flex items-center gap-2 px-6 ${Object.values(activeFilters).some(v => v !== '') ? 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/40 text-indigo-600 dark:text-indigo-400' : ''
                         }`}
                 >
                     <Filter size={18} />
