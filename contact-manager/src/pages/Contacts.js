@@ -105,14 +105,15 @@ function Contacts() {
         }
     }, []);
 
-    // Initial load - Run ONLY once on mount
+    // Pemuatan Awal - Hanya dijalankan SEKALI saat komponen dimuat
     useEffect(() => {
         const initialLoad = async () => {
             await loadGroups();
-            // We call loadContacts(true) here explicitly for the very first time
+            // Cek apakah ada parameter pencarian di URL saat pertama kali buka
+            const currentSearch = searchParams.get('search') || '';
             try {
                 setLoading(true);
-                const data = await contactAPI.getAll({ ...activeFilters, search: '' });
+                const data = await contactAPI.getAll({ ...activeFilters, search: currentSearch });
                 setContacts(data);
             } finally {
                 setLoading(false);
@@ -135,11 +136,11 @@ function Contacts() {
             const newContact = await contactAPI.create(formData);
             setContacts((prev) => [newContact, ...prev]);
             setShowForm(false);
-            toast.success('Contact added successfully');
-            addNotification(`New contact "${newContact.name}" added`);
+            toast.success('Kontak berhasil ditambahkan');
+            addNotification(`Kontak baru "${newContact.name}" ditambahkan`);
         } catch (error) {
             console.error('Error adding contact:', error);
-            toast.error(error.response?.data?.error || 'Failed to add contact');
+            toast.error(error.response?.data?.error || 'Gagal menambahkan kontak');
         }
     };
 
@@ -151,39 +152,39 @@ function Contacts() {
             );
             setShowForm(false);
             setEditingContact(null);
-            toast.success('Contact updated successfully');
-            addNotification(`Contact "${updatedContact.name}" updated`);
+            toast.success('Kontak berhasil diperbarui');
+            addNotification(`Kontak "${updatedContact.name}" diperbarui`);
         } catch (error) {
             console.error('Error updating contact:', error);
-            toast.error('Failed to update contact');
+            toast.error('Gagal memperbarui kontak');
         }
     };
 
     const handleDeleteContact = async (id) => {
-        if (window.confirm('Are you sure you want to delete this contact?')) {
+        if (window.confirm('Apakah Anda yakin ingin menghapus kontak ini?')) {
             try {
-                const contactName = contacts.find(c => c.id === id)?.name || 'Unknown';
+                const contactName = contacts.find(c => c.id === id)?.name || 'Tidak Dikenal';
                 await contactAPI.delete(id);
                 setContacts((prev) => prev.filter((c) => c.id !== id));
-                toast.success('Contact deleted successfully');
-                addNotification(`Contact "${contactName}" deleted`);
+                toast.success('Kontak berhasil dihapus');
+                addNotification(`Kontak "${contactName}" dihapus`);
             } catch (error) {
                 console.error('Error deleting contact:', error);
-                toast.error('Failed to delete contact');
+                toast.error('Gagal menghapus kontak');
             }
         }
     };
 
     const handleBulkDelete = async (ids) => {
-        if (window.confirm(`Are you sure you want to delete ${ids.length} contacts?`)) {
+        if (window.confirm(`Apakah Anda yakin ingin menghapus ${ids.length} kontak terpilih?`)) {
             try {
                 await Promise.all(ids.map(id => contactAPI.delete(id)));
                 setContacts((prev) => prev.filter((c) => !ids.includes(c.id)));
-                toast.success('Selected contacts deleted');
-                addNotification(`${ids.length} contacts deleted via bulk action`);
+                toast.success('Kontak terpilih berhasil dihapus');
+                addNotification(`${ids.length} kontak dihapus lewat aksi masal`);
             } catch (error) {
                 console.error('Error deleting contacts:', error);
-                toast.error('Failed to delete some contacts');
+                toast.error('Gagal menghapus beberapa kontak');
             }
         }
     };
@@ -192,7 +193,7 @@ function Contacts() {
     const handleRefresh = () => {
         loadContacts(true);
         loadGroups();
-        toast.success('Registry refreshed');
+        toast.success('Registri diperbarui');
     };
 
     const handleExportPDF = () => {
@@ -205,7 +206,7 @@ function Contacts() {
             <div className="flex justify-center items-center h-96">
                 <div className="text-center">
                     <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mx-auto mb-4" />
-                    <p className="text-slate-500 font-medium dark:text-slate-400">Synchronizing contact registry...</p>
+                    <p className="text-slate-500 font-medium dark:text-slate-400">Sinkronisasi registri kontak...</p>
                 </div>
             </div>
         );
@@ -213,18 +214,18 @@ function Contacts() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            {/* Header section */}
+            {/* Bagian Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 print:hidden">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Contact Registry</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Manage and organize your professional network with precision.</p>
+                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Registri Kontak</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Kelola dan atur jaringan profesional Anda dengan presisi.</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleRefresh}
                         className="btn-secondary h-11 w-11 !p-0 flex items-center justify-center"
-                        title="Refresh Engine"
+                        title="Segarkan Mesin"
                     >
                         <RefreshCw size={18} className={isFetching ? 'animate-spin text-indigo-500' : ''} />
                     </button>
@@ -234,17 +235,17 @@ function Contacts() {
                             className="btn-secondary flex items-center gap-2"
                         >
                             <Download size={18} />
-                            Import
+                            Impor
                         </button>
                     )}
                     {isAdmin && (
                         <button
                             onClick={handleExportPDF}
                             className="btn-secondary flex items-center gap-2"
-                            title="Export PDF"
+                            title="Ekspor PDF"
                         >
                             <FileText size={18} />
-                            Export PDF
+                            Ekspor PDF
                         </button>
                     )}
                     {isAdmin && (
@@ -256,13 +257,13 @@ function Contacts() {
                             className="btn-primary flex items-center gap-2"
                         >
                             <Plus size={18} />
-                            Add Contact
+                            Tambah Kontak
                         </button>
                     )}
                 </div>
             </div>
 
-            {/* Toolbar Area */}
+            {/* Area Toolbar */}
             <div className="flex flex-col sm:flex-row gap-4 print:hidden">
                 <div className="relative flex-1 group">
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5">
@@ -274,7 +275,7 @@ function Contacts() {
                     </div>
                     <input
                         type="text"
-                        placeholder="Search name, email, company, or position..."
+                        placeholder="Cari nama, email, perusahaan, atau jabatan..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="input-premium pl-12"
@@ -286,7 +287,7 @@ function Contacts() {
                         }`}
                 >
                     <Filter size={18} />
-                    {Object.values(activeFilters).some(v => v !== '') ? 'Filters Active' : 'Advanced Filters'}
+                    {Object.values(activeFilters).some(v => v !== '') ? 'Filter Aktif' : 'Filter Lanjutan'}
                 </button>
             </div>
 
@@ -339,9 +340,9 @@ function Contacts() {
                         <div className="px-8 py-6 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
                             <div>
                                 <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-                                    {editingContact ? 'Refine Contact' : 'Create New Entry'}
+                                    {editingContact ? 'Perbarui Kontak' : 'Buat Entri Baru'}
                                 </h2>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Please provide accurate contact information.</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Mohon berikan informasi kontak yang akurat.</p>
                             </div>
                             <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer transition-colors" onClick={() => setShowForm(false)}>
                                 <Plus className="rotate-45" size={24} />

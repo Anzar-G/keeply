@@ -38,7 +38,7 @@ const Dashboard = () => {
     const fetchStats = useCallback(async (isManual = false) => {
         try {
             if (isManual) {
-                toast.loading('Synchronizing engine...', { id: 'refresh-sync' });
+                toast.loading('Menyinkronkan mesin...', { id: 'refresh-sync' });
             } else {
                 setLoading(true);
             }
@@ -72,12 +72,12 @@ const Dashboard = () => {
             });
 
             if (isManual) {
-                toast.success('Engine synchronized.', { id: 'refresh-sync' });
+                toast.success('Mesin sinkron.', { id: 'refresh-sync' });
             }
         } catch (error) {
             console.error('Failed to load dashboard stats', error);
             if (isManual) {
-                toast.error('Sync failed.', { id: 'refresh-sync' });
+                toast.error('Sinkronisasi gagal.', { id: 'refresh-sync' });
             }
         } finally {
             setLoading(false);
@@ -93,7 +93,7 @@ const Dashboard = () => {
     };
 
     const handleDownloadPDF = () => {
-        const toastId = toast.loading('Preparing report...');
+        const toastId = toast.loading('Menyiapkan laporan...');
         setTimeout(() => {
             toast.dismiss(toastId);
             window.print();
@@ -105,7 +105,7 @@ const Dashboard = () => {
             <div className="flex justify-center items-center h-96">
                 <div className="text-center">
                     <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mx-auto mb-4" />
-                    <p className="text-slate-500 font-medium">Synchronizing analytics engine...</p>
+                    <p className="text-slate-500 font-medium">Menyinkronkan mesin analitik...</p>
                 </div>
             </div>
         );
@@ -116,8 +116,8 @@ const Dashboard = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Performance Overview</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Monitor your registry's growth and relationship health.</p>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Ringkasan Performa</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Pantau pertumbuhan registri dan kesehatan relasi Anda.</p>
                 </div>
                 <div className="flex gap-2 print:hidden">
                     <button
@@ -125,14 +125,14 @@ const Dashboard = () => {
                         className="btn-secondary px-5 flex items-center gap-2"
                     >
                         <FileText size={16} />
-                        Download PDF
+                        Ekspor PDF
                     </button>
                     <button
                         onClick={handleRefresh}
                         className="btn-primary px-6 shadow-indigo-100 flex items-center gap-2"
                     >
                         <RefreshCw size={16} />
-                        Refresh Engine
+                        Segarkan Mesin
                     </button>
                 </div>
             </div>
@@ -140,28 +140,28 @@ const Dashboard = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                    title="Active Registry"
+                    title="Registri Aktif"
                     value={stats.totalContacts}
                     percentage={stats.growthPct}
                     icon={Users}
                     color="bg-indigo-600"
                 />
                 <StatCard
-                    title="Monthly Velocity"
+                    title="Veloitas Bulanan"
                     value={`${((stats.newThisMonth / (stats.totalContacts || 1)) * 100).toFixed(1)}%`}
                     percentage={((stats.newThisMonth / (stats.totalContacts || 1)) * 100).toFixed(1)}
                     icon={UserPlus}
                     color="bg-slate-900"
                 />
                 <StatCard
-                    title="Company Depth"
+                    title="Kedalaman Perusahaan"
                     value={stats.companies}
                     percentage="2.4"
                     icon={Building2}
                     color="bg-cyan-600"
                 />
                 <StatCard
-                    title="System Pulse"
+                    title="Denyut Sistem"
                     value="99.9%"
                     percentage="0.2"
                     isNegative={false}
@@ -176,8 +176,8 @@ const Dashboard = () => {
                 <div className="lg:col-span-2 premium-card p-10 flex flex-col min-h-[420px] bg-white relative overflow-hidden">
                     <div className="flex justify-between items-center mb-10 relative z-10">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Growth Dynamic</h3>
-                            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight">Real-time analytical trends</p>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Dinamika Pertumbuhan</h3>
+                            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight">Tren analitik waktu nyata</p>
                         </div>
                         <div className="flex items-center gap-2 p-1 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-100 dark:border-slate-800">
                             <button className="px-4 py-1.5 text-xs font-bold bg-white dark:bg-slate-800 shadow-sm rounded-lg text-indigo-600 dark:text-indigo-400 transition-all">Q1</button>
@@ -191,8 +191,8 @@ const Dashboard = () => {
                             <div className="w-20 h-20 bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none flex items-center justify-center mx-auto mb-6 border border-slate-50 dark:border-slate-800 transition-transform duration-700 group-hover:scale-105">
                                 <TrendingUp size={36} className="text-indigo-600 dark:text-indigo-400" strokeWidth={1.5} />
                             </div>
-                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">Analyzing Patterns...</h4>
-                            <p className="text-slate-400 dark:text-slate-500 text-sm font-medium leading-relaxed italic">Our processing engine is currently compiling historical contact data to generate high-fidelity growth projections.</p>
+                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">Menganalisis Pola...</h4>
+                            <p className="text-slate-400 dark:text-slate-500 text-sm font-medium leading-relaxed italic">Mesin pemrosesan kami sedang menyusun data kontak historis untuk menghasilkan proyeksi pertumbuhan dengan fidelitas tinggi.</p>
                         </div>
                     </div>
                 </div>
@@ -201,8 +201,8 @@ const Dashboard = () => {
                 <div className="premium-card p-8 bg-white border-slate-100 flex flex-col">
                     <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Recent Pulse</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Status Updates</p>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Denyut Terkini</h3>
+                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Pembaruan Status</p>
                         </div>
                         <button className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 flex items-center justify-center transition-all border border-slate-100 dark:border-slate-800">
                             <ArrowUpRight size={16} />
@@ -218,7 +218,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <h4 className="font-bold text-slate-900 dark:text-slate-100 truncate text-sm">{contact.name}</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tight truncate">{contact.company || 'Registry Entry'}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tight truncate">{contact.company || 'Entri Registri'}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-[10px] font-extrabold text-slate-800 dark:text-slate-400 lowercase">
@@ -236,7 +236,7 @@ const Dashboard = () => {
                                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
                                     <Users className="text-slate-200" size={32} />
                                 </div>
-                                <p className="text-slate-400 font-bold text-sm">Quiet Registry</p>
+                                <p className="text-slate-400 font-bold text-sm">Registri Hening</p>
                             </div>
                         )}
                     </div>

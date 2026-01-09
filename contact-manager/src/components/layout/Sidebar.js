@@ -22,14 +22,14 @@ const Sidebar = () => {
     }, []);
 
     const handleAddGroup = async () => {
-        const name = window.prompt('Enter new group name:');
+        const name = window.prompt('Masukkan nama grup baru:');
         if (!name) return;
         try {
             const newGroup = await groupAPI.create({ name });
             setGroups([...groups, newGroup]);
-            toast.success('Group created');
+            toast.success('Grup dibuat');
         } catch (error) {
-            toast.error('Failed to create group');
+            toast.error('Gagal membuat grup');
         }
     };
 
@@ -51,7 +51,7 @@ const Sidebar = () => {
             {/* Navigation and Bottom Section */}
             <div className="flex flex-col justify-between h-[calc(100vh-5rem)] overflow-y-auto px-4 py-8">
                 <nav className="space-y-2">
-                    <p className="px-4 text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-4">Main Menu</p>
+                    <p className="px-4 text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-4">Menu Utama</p>
 
                     <NavLink
                         to="/"
@@ -63,7 +63,7 @@ const Sidebar = () => {
                         }
                     >
                         <Users size={18} />
-                        Contact List
+                        Daftar Kontak
                     </NavLink>
 
                     <NavLink
@@ -76,18 +76,18 @@ const Sidebar = () => {
                         }
                     >
                         <LayoutDashboard size={18} />
-                        Analytics
+                        Analitik
                     </NavLink>
 
                     {/* Groups Section */}
                     <div className="pt-6">
                         <div className="flex items-center justify-between px-4 mb-4">
-                            <p className="text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]">Contact Groups</p>
+                            <p className="text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]">Grup Kontak</p>
                             {user?.role === 'admin' && (
                                 <button
                                     onClick={handleAddGroup}
                                     className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md text-slate-400 hover:text-indigo-600 transition-colors"
-                                    title="Create Group"
+                                    title="Buat Grup"
                                 >
                                     <Plus size={14} />
                                 </button>
@@ -123,7 +123,7 @@ const Sidebar = () => {
                                 </NavLink>
                             ))}
                             {groups.length === 0 && (
-                                <p className="px-4 text-[10px] font-medium text-slate-400 italic">No groups defined</p>
+                                <p className="px-4 text-[10px] font-medium text-slate-400 italic">Belum ada grup</p>
                             )}
                         </div>
                     </div>
@@ -141,7 +141,7 @@ const Sidebar = () => {
                                 }
                             >
                                 <History size={18} />
-                                Activity Log
+                                Log Aktivitas
                             </NavLink>
                         </>
                     )}
@@ -151,11 +151,11 @@ const Sidebar = () => {
                 <div className="mt-auto border-t border-slate-50 dark:border-slate-800/50 pt-8 space-y-2">
                     <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left">
                         <UserCircle size={18} />
-                        Profile
+                        Profil
                     </button>
                     <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left">
                         <Settings size={18} />
-                        Settings
+                        Pengaturan
                     </button>
 
                     <div className="mt-6 p-4 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white relative overflow-hidden group border border-white/5">

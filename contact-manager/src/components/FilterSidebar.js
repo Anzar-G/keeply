@@ -22,8 +22,8 @@ const FilterSidebar = ({
                 {/* Header */}
                 <div className="px-6 py-5 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between bg-slate-50/30 dark:bg-slate-800/20">
                     <div>
-                        <h2 className="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Advanced Filtering</h2>
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-0.5">Refine your registry view</p>
+                        <h2 className="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Filter Lanjutan</h2>
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-0.5">Saring tampilan registri Anda</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -39,7 +39,7 @@ const FilterSidebar = ({
                     <div className="space-y-3">
                         <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-1">
                             <Users size={12} className="text-slate-300 dark:text-slate-700" />
-                            By Registry Group
+                            Berdasarkan Grup Registri
                         </label>
                         <div className="grid grid-cols-1 gap-2">
                             <button
@@ -49,7 +49,7 @@ const FilterSidebar = ({
                                     : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'
                                     }`}
                             >
-                                All Contacts
+                                Semua Kontak
                             </button>
                             {groups.map(group => (
                                 <button
@@ -74,11 +74,11 @@ const FilterSidebar = ({
                     <div className="space-y-3">
                         <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-1">
                             <Building2 size={12} className="text-slate-300 dark:text-slate-700" />
-                            Business Intelligence
+                            Perusahaan
                         </label>
                         <input
                             type="text"
-                            placeholder="Search by company name..."
+                            placeholder="Cari berdasarkan nama perusahaan..."
                             value={filters.company}
                             onChange={(e) => onFilterChange('company', e.target.value)}
                             className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all font-bold text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-sm text-sm"
@@ -89,11 +89,11 @@ const FilterSidebar = ({
                     <div className="space-y-3">
                         <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-1">
                             <Tag size={12} className="text-slate-300 dark:text-slate-700" />
-                            Registry Tags
+                            Tag Registri
                         </label>
                         <input
                             type="text"
-                            placeholder="E.g. VIP, Partner, Lead..."
+                            placeholder="Contoh: VIP, Partner, Lead..."
                             value={filters.tag}
                             onChange={(e) => onFilterChange('tag', e.target.value)}
                             className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all font-bold text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-sm text-sm"
@@ -104,11 +104,11 @@ const FilterSidebar = ({
                     <div className="space-y-3">
                         <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-1">
                             <Calendar size={12} className="text-slate-300 dark:text-slate-700" />
-                            Registration Period
+                            Periode Registrasi
                         </label>
                         <div className="grid grid-cols-1 gap-3">
                             <div className="space-y-1">
-                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 px-1 italic">From Date</span>
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 px-1 italic">Dari Tanggal</span>
                                 <input
                                     type="date"
                                     value={filters.dateFrom}
@@ -117,7 +117,7 @@ const FilterSidebar = ({
                                 />
                             </div>
                             <div className="space-y-1">
-                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 px-1 italic">To Date</span>
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 px-1 italic">Sampai Tanggal</span>
                                 <input
                                     type="date"
                                     value={filters.dateTo}
@@ -136,13 +136,13 @@ const FilterSidebar = ({
                         className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
                     >
                         <RotateCcw size={14} />
-                        Reset All
+                        Atur Ulang Semua
                     </button>
                     <button
                         onClick={onClose}
                         className="flex-1 px-6 py-4 bg-indigo-600 text-white font-bold text-xs rounded-2xl shadow-lg shadow-indigo-100/20 hover:bg-indigo-700 transition-all active:scale-95"
                     >
-                        Apply Filters
+                        Terapkan Filter
                     </button>
                 </div>
             </div>

@@ -54,7 +54,7 @@ function Navbar({ toggleSidebar, isMobile }) {
                     <input
                         ref={searchRef}
                         type="text"
-                        placeholder="Search anything..."
+                        placeholder="Cari apa saja..."
                         value={topSearch}
                         onChange={(e) => setTopSearch(e.target.value)}
                         className="bg-transparent border-none outline-none text-sm text-gray-700 dark:text-slate-200 w-full placeholder-gray-400 dark:placeholder-slate-600"
@@ -72,7 +72,7 @@ function Navbar({ toggleSidebar, isMobile }) {
                 <button
                     onClick={toggleTheme}
                     className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-slate-400 transition-all duration-300 transform active:rotate-180"
-                    title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                    title={theme === 'dark' ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap'}
                 >
                     {theme === 'dark' ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-slate-600" />}
                 </button>
@@ -98,14 +98,14 @@ function Navbar({ toggleSidebar, isMobile }) {
                             />
                             <div className="absolute right-0 top-12 w-80 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-xl z-50 animate-in slide-in-from-top-2">
                                 <div className="p-4 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between">
-                                    <h3 className="font-semibold text-gray-900 dark:text-slate-100">Notifications</h3>
+                                    <h3 className="font-semibold text-gray-900 dark:text-slate-100">Notifikasi</h3>
                                     {unreadCount > 0 && (
                                         <button
                                             onClick={markAllAsRead}
                                             className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1"
                                         >
                                             <CheckCheck size={14} />
-                                            Mark all read
+                                            Marked semua dibaca
                                         </button>
                                     )}
                                 </div>
@@ -131,7 +131,7 @@ function Navbar({ toggleSidebar, isMobile }) {
                                         ))
                                     ) : (
                                         <div className="p-8 text-center text-gray-500 text-sm">
-                                            No notifications
+                                            Tidak ada notifikasi
                                         </div>
                                     )}
                                 </div>
@@ -160,7 +160,7 @@ function Navbar({ toggleSidebar, isMobile }) {
                         <button
                             onClick={handleLogout}
                             className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg text-gray-400 hover:text-red-600 transition-colors"
-                            title="Logout"
+                            title="Keluar"
                         >
                             <LogOut size={18} />
                         </button>
@@ -171,7 +171,7 @@ function Navbar({ toggleSidebar, isMobile }) {
                             onClick={() => navigate('/login')}
                             className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm active:scale-95"
                         >
-                            Admin Login
+                            Login Admin
                         </button>
                     </div>
                 )}

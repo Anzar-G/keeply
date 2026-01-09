@@ -38,13 +38,13 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
     const handleBulkGroupAssign = async (groupId) => {
         try {
             await contactAPI.bulkAssignToGroup(selectedIds, groupId);
-            const groupName = groups.find(g => g.id === groupId)?.name || 'Group';
-            toast.success(`Assigned ${selectedIds.length} contacts to ${groupName}`);
-            addNotification(`Assigned ${selectedIds.length} contacts to group "${groupName}"`);
+            const groupName = groups.find(g => g.id === groupId)?.name || 'Grup';
+            toast.success(`Berhasil menambahkan ${selectedIds.length} kontak ke ${groupName}`);
+            addNotification(`Menambahkan ${selectedIds.length} kontak ke grup "${groupName}"`);
             setSelectedIds([]);
             setShowGroupSelect(false);
         } catch (error) {
-            toast.error('Failed to assign group');
+            toast.error('Gagal menetapkan grup');
         }
     };
 
@@ -81,9 +81,9 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                 <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mb-6 text-slate-200 dark:text-slate-700">
                     <UserPlus size={48} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">Registry is empty</h3>
+                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">Registri kosong</h3>
                 <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-medium leading-relaxed">
-                    Begin building your professional database by adding your first contact entry above.
+                    Mulai bangun database profesional Anda dengan menambahkan entri kontak pertama di atas.
                 </p>
             </div>
         );
@@ -105,9 +105,9 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                     />
                                 </div>
                             </th>
-                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em]">Contact Info</th>
-                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] hidden lg:table-cell">Professional</th>
-                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] hidden xl:table-cell">Tags</th>
+                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em]">Info Kontak</th>
+                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] hidden lg:table-cell">Profesional</th>
+                            <th className="p-6 text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] hidden xl:table-cell">Tag</th>
                             <th className="p-6 text-right text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em]">Meta</th>
                         </tr>
                     </thead>
@@ -167,11 +167,11 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700 dark:text-slate-300">
                                                 <Building2 size={14} className="text-slate-300 dark:text-slate-700" />
-                                                {contact.company || 'Private'}
+                                                {contact.company || 'Pribadi'}
                                             </div>
                                             <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500">
                                                 <User size={12} className="text-slate-200 dark:text-slate-800" />
-                                                {contact.position || 'Neutral'}
+                                                {contact.position || 'Netral'}
                                             </div>
                                         </div>
                                     </td>
@@ -187,7 +187,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-slate-300 dark:text-slate-700 text-sm italic font-medium">None</span>
+                                                <span className="text-slate-300 dark:text-slate-700 text-sm italic font-medium">Kosong</span>
                                             )}
                                         </div>
                                     </td>
@@ -197,7 +197,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                                 <button
                                                     onClick={() => onEdit(contact)}
                                                     className="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-600 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md dark:hover:shadow-indigo-500/10 rounded-xl transition-all"
-                                                    title="Refine information"
+                                                    title="Perbarui informasi"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
@@ -206,7 +206,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                                 <button
                                                     onClick={() => onDelete(contact.id)}
                                                     className="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md dark:hover:shadow-rose-500/10 rounded-xl transition-all"
-                                                    title="Archive entry"
+                                                    title="Arsipkan entri"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -229,7 +229,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                 {selectedIds.length}
                             </div>
                             <span className="text-[10px] font-black text-white tracking-[0.2em] uppercase whitespace-nowrap">
-                                {selectedIds.length} Selected
+                                {selectedIds.length} Terpilih
                             </span>
                         </div>
 
@@ -242,7 +242,7 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                     className="flex items-center gap-2 px-5 py-2.5 bg-rose-500 text-white text-xs font-extrabold rounded-xl hover:bg-rose-600 transition-all active:scale-95 tracking-wider uppercase"
                                 >
                                     <Trash2 size={14} />
-                                    Archive
+                                    Hapus
                                 </button>
                             )}
                             {onBulkDelete && isAdmin && groups && groups.length > 0 && (
@@ -252,14 +252,14 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                         className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white text-xs font-extrabold rounded-xl hover:bg-slate-700 transition-all active:scale-95 tracking-wider uppercase"
                                     >
                                         <FolderPlus size={14} />
-                                        Group
+                                        Grup
                                         <ChevronUp size={12} className={`transition-transform ${showGroupSelect ? 'rotate-180' : ''}`} />
                                     </button>
 
                                     {showGroupSelect && (
                                         <div className="absolute bottom-full mb-3 left-0 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden min-w-[200px] animate-in slide-in-from-bottom-2 duration-200">
                                             <div className="p-3 border-b border-slate-800">
-                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Select Group</p>
+                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Pilih Grup</p>
                                             </div>
                                             <div className="max-h-48 overflow-y-auto py-1">
                                                 {groups.map(group => (
@@ -282,12 +282,12 @@ function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups
                                 className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-xs font-extrabold rounded-xl hover:bg-indigo-700 transition-all active:scale-95 tracking-wider uppercase"
                             >
                                 <Download size={14} />
-                                Export
+                                Ekspor
                             </button>
                             <button
                                 onClick={() => setSelectedIds([])}
                                 className="h-10 w-10 flex items-center justify-center bg-slate-800 text-slate-400 hover:text-white rounded-xl transition-all"
-                                title="Deselect all"
+                                title="Batalkan semua"
                             >
                                 <X size={16} />
                             </button>

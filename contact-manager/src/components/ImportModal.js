@@ -14,13 +14,13 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
     const [duplicateStrategy, setDuplicateStrategy] = useState('skip'); // skip, overwrite, error
 
     const systemFields = [
-        { key: 'name', label: 'Contact Name', required: true },
-        { key: 'email', label: 'Email Address', required: true },
-        { key: 'phone', label: 'Phone Number', required: false },
-        { key: 'company', label: 'Company', required: false },
-        { key: 'position', label: 'Job Position', required: false },
-        { key: 'notes', label: 'Special Notes', required: false },
-        { key: 'group_id', label: 'Group ID', required: false },
+        { key: 'name', label: 'Nama Kontak', required: true },
+        { key: 'email', label: 'Alamat Email', required: true },
+        { key: 'phone', label: 'Nomor Telepon', required: false },
+        { key: 'company', label: 'Perusahaan', required: false },
+        { key: 'position', label: 'Jabatan', required: false },
+        { key: 'notes', label: 'Catatan Khusus', required: false },
+        { key: 'group_id', label: 'ID Grup', required: false },
     ];
 
     const handleFileUpload = (e) => {
@@ -57,7 +57,7 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
         const missing = requiredFields.filter(f => !mapping[f]);
 
         if (missing.length > 0) {
-            toast.error(`Please map required fields: ${missing.join(', ')}`);
+            toast.error(`Mohon petakan kolom yang wajib diisi: ${missing.join(', ')}`);
             return;
         }
 
@@ -71,12 +71,12 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                 return contact;
             });
             const response = await contactAPI.bulkCreate(formattedContacts, duplicateStrategy);
-            toast.success(`Integration Complete: ${response.length} records processed.`);
+            toast.success(`Integrasi Selesai: ${response.length} data diproses.`);
             onImportSuccess();
             onClose();
         } catch (error) {
             console.error('Import failed:', error);
-            toast.error(error.response?.data?.error || 'Failed to import contacts');
+            toast.error(error.response?.data?.error || 'Gagal mengimpor kontak');
         } finally {
             setImporting(false);
         }
@@ -90,8 +90,8 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900 sticky top-0 z-10">
                     <div>
-                        <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Import Intelligence</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Transform your CSV data into professional registry entries.</p>
+                        <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Kecerdasan Impor</h2>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Ubah data CSV Anda menjadi entri registri profesional.</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 transition-colors">
                         <X size={24} />
@@ -104,7 +104,7 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                     <div className={step !== 1 ? 'opacity-50 pointer-events-none' : ''}>
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-200">1</div>
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Registry Source</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Sumber Registri</h3>
                         </div>
 
                         {!file ? (
@@ -113,8 +113,8 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                                     <div className="p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-4 group-hover:scale-110 transition-transform">
                                         <Upload className="text-indigo-600" size={32} />
                                     </div>
-                                    <p className="mb-2 text-sm font-bold text-slate-900 dark:text-white">Click to upload or drag and drop</p>
-                                    <p className="text-xs text-slate-400 font-medium uppercase tracking-tighter">Strictly CSV formats only</p>
+                                    <p className="mb-2 text-sm font-bold text-slate-900 dark:text-white">Klik untuk unggah atau seret file ke sini</p>
+                                    <p className="text-xs text-slate-400 font-medium uppercase tracking-tighter">Hanya format CSV</p>
                                 </div>
                                 <input type="file" className="hidden" accept=".csv" onChange={handleFileUpload} />
                             </label>
@@ -125,10 +125,10 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                                 </div>
                                 <div className="flex-1">
                                     <p className="text-sm font-bold text-slate-900 dark:text-white">{file.name}</p>
-                                    <p className="text-xs text-slate-400 font-medium">{(file.size / 1024).toFixed(1)} KB • {csvData.length} records detected</p>
+                                    <p className="text-xs text-slate-400 font-medium">{(file.size / 1024).toFixed(1)} KB • {csvData.length} data terdeteksi</p>
                                 </div>
                                 <CheckCircle className="text-emerald-500" size={24} />
-                                <button onClick={() => { setFile(null); setStep(1); }} className="text-xs font-bold text-indigo-600 hover:underline px-4">Change File</button>
+                                <button onClick={() => { setFile(null); setStep(1); }} className="text-xs font-bold text-indigo-600 hover:underline px-4">Ganti File</button>
                             </div>
                         )}
                     </div>
@@ -138,12 +138,12 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                         <div className="animate-in slide-in-from-bottom-4 duration-500">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-200">2</div>
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Field Orchestration</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Orkestrasi Kolom</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">System Schema</h4>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Skema Sistem</h4>
                                     <div className="space-y-3">
                                         {systemFields.map(field => (
                                             <div key={field.key} className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm hover:border-indigo-200 transition-colors">
@@ -158,7 +158,7 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                                                         onChange={(e) => setMapping(prev => ({ ...prev, [field.key]: e.target.value }))}
                                                         className="flex-1 bg-slate-50 dark:bg-slate-900 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-indigo-500 py-2 dark:text-slate-300"
                                                     >
-                                                        <option value="">Select Column...</option>
+                                                        <option value="">Pilih Kolom...</option>
                                                         {headers.map(h => <option key={h} value={h}>{h}</option>)}
                                                     </select>
                                                 </div>
@@ -169,7 +169,7 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
 
                                 {/* Preview */}
                                 <div className="space-y-4">
-                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Data Integrity Preview</h4>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Pratinjau Integritas Data</h4>
                                     <div className="bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden min-h-[300px]">
                                         <table className="w-full text-left text-[11px]">
                                             <thead className="bg-white/50 dark:bg-slate-900/50">
@@ -194,7 +194,7 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                                             </tbody>
                                         </table>
                                         <div className="p-6 text-center">
-                                            <p className="text-[10px] font-bold text-slate-400 italic">Displaying algorithmic projection of the first 5 entries.</p>
+                                            <p className="text-[10px] font-bold text-slate-400 italic">Menampilkan proyeksi algoritma dari 5 entri pertama.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -209,27 +209,27 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                         {step >= 2 && (
                             <div className="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-2">
                                 <AlertTriangle size={14} className="text-amber-500" />
-                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Duplicate Strategy:</span>
+                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Strategi Duplikat:</span>
                                 <select
                                     id="duplicate-strategy-selector"
                                     value={duplicateStrategy}
                                     onChange={(e) => setDuplicateStrategy(e.target.value)}
                                     className="bg-transparent border-none text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest focus:ring-0 p-0 cursor-pointer"
                                 >
-                                    <option value="skip" className="dark:bg-slate-900">Skip Existing Emails</option>
-                                    <option value="overwrite" className="dark:bg-slate-900">Overwrite / Sync Data</option>
-                                    <option value="error" className="dark:bg-slate-900">Strict (Stop on Error)</option>
+                                    <option value="skip" className="dark:bg-slate-900">Lewati Email yang Ada</option>
+                                    <option value="overwrite" className="dark:bg-slate-900">Timpa / Sinkron Data</option>
+                                    <option value="error" className="dark:bg-slate-900">Ketat (Berhenti jika Error)</option>
                                 </select>
                             </div>
                         )}
                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 italic">
                             <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                            <span>Unmapped fields will be bypassed by the ingestion engine.</span>
+                            <span>Kolom yang tidak dipetakan akan dilewati oleh mesin pemrosesan.</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
                         <button onClick={onClose} className="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-                            Abort Mission
+                            Batalkan Misi
                         </button>
                         <button
                             onClick={handleImport}
@@ -239,11 +239,11 @@ const ImportModal = ({ isOpen, onClose, onImportSuccess, groups }) => {
                             {importing ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
-                                    Ingesting Data...
+                                    Memproses Data...
                                 </>
                             ) : (
                                 <>
-                                    Commit {csvData.length} Records
+                                    Simpan {csvData.length} Data
                                     <DownloadCloud size={18} />
                                 </>
                             )}
