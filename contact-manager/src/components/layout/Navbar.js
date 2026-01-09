@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Bell, Search, Menu, CheckCheck, LogOut, Sun, Moon, Command } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 import { useAuth } from '../../context/AuthContext';
@@ -14,9 +14,11 @@ function Navbar({ toggleSidebar, isMobile }) {
     const navigate = useNavigate();
     const searchRef = useRef(null);
 
-    useKeyboardShortcuts({
+    const shortcuts = useMemo(() => ({
         'k': () => searchRef.current?.focus()
-    });
+    }), []);
+
+    useKeyboardShortcuts(shortcuts);
 
     const handleLogout = () => {
         logout();

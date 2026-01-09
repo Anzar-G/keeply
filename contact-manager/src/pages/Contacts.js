@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ContactList from '../components/ContactList';
 import ContactForm from '../components/ContactForm';
@@ -36,7 +36,7 @@ function Contacts() {
     });
 
     // Keyboard Shortcuts
-    useKeyboardShortcuts({
+    const shortcuts = useMemo(() => ({
         'n': () => {
             if (isAdmin) {
                 setEditingContact(null);
@@ -48,7 +48,9 @@ function Contacts() {
             setShowImportModal(false);
             setShowFilters(false);
         }
-    });
+    }), [isAdmin]);
+
+    useKeyboardShortcuts(shortcuts);
 
     // Debounce search query
     useEffect(() => {
@@ -65,12 +67,12 @@ function Contacts() {
     }, [groupParam, activeFilters.group]);
 
     useEffect(() => {
-        const query = searchParam.get('search') || '';
+        const query = searchParams.get('search') || '';
         if (query !== searchQuery) {
             setSearchQuery(query);
             setDebouncedSearch(query);
         }
-    }, [searchParam, searchQuery]);
+    }, [searchParams, searchQuery]);
 
     const { addNotification } = useNotification();
 
