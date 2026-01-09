@@ -56,7 +56,7 @@ function Contacts() {
 
             const params = {
                 ...activeFilters,
-                search: searchQuery
+                search: debouncedSearch
             };
             const data = await contactAPI.getAll(params);
             setContacts(data);
@@ -67,7 +67,7 @@ function Contacts() {
             setLoading(false);
             setIsFetching(false);
         }
-    }, [activeFilters, searchQuery]);
+    }, [activeFilters, debouncedSearch]);
 
     const loadGroups = useCallback(async () => {
         try {
@@ -78,11 +78,22 @@ function Contacts() {
         }
     }, []);
 
-    // Initial load
+    // Initial load - Run ONLY once on mount
     useEffect(() => {
-        loadContacts(true);
-        loadGroups();
-    }, [loadContacts, loadGroups]); // Only once on mount or when groups load
+        const initialLoad = async () => {
+            await loadGroups();
+            // We call loadContacts(true) here explicitly for the very first time
+            try {
+                setLoading(true);
+                const data = await contactAPI.getAll({ ...activeFilters, search: '' });
+                setContacts(data);
+            } finally {
+                setLoading(false);
+            }
+        };
+        initialLoad();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Handle search/filter updates without full-page loading refresh
     useEffect(() => {
