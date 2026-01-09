@@ -8,15 +8,19 @@ import FilterSidebar from '../components/FilterSidebar';
 import toast from 'react-hot-toast';
 import { useNotification } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
+import ImportModal from '../components/ImportModal';
 
 function Contacts() {
     const [searchParams, setSearchParams] = useSearchParams();
     const groupParam = searchParams.get('group') || '';
 
     const [contacts, setContacts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Only for initial load
+    const [isFetching, setIsFetching] = useState(false); // For search/filter updates
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [showForm, setShowForm] = useState(false);
+    const [showImportModal, setShowImportModal] = useState(false);
     const [editingContact, setEditingContact] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
     const [groups, setGroups] = useState([]);
@@ -28,6 +32,14 @@ function Contacts() {
         dateTo: ''
     });
 
+    // Debounce search query
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
     useEffect(() => {
         if (groupParam !== activeFilters.group) {
             setActiveFilters(prev => ({ ...prev, group: groupParam }));
@@ -37,9 +49,11 @@ function Contacts() {
     const { addNotification } = useNotification();
     const { isAdmin } = useAuth();
 
-    const loadContacts = useCallback(async () => {
+    const loadContacts = useCallback(async (isInitial = false) => {
         try {
-            setLoading(true);
+            if (isInitial) setLoading(true);
+            else setIsFetching(true);
+
             const params = {
                 ...activeFilters,
                 search: searchQuery
@@ -51,6 +65,7 @@ function Contacts() {
             toast.error('Failed to load contacts.');
         } finally {
             setLoading(false);
+            setIsFetching(false);
         }
     }, [activeFilters, searchQuery]);
 
@@ -63,10 +78,19 @@ function Contacts() {
         }
     }, []);
 
+    // Initial load
     useEffect(() => {
-        loadContacts();
+        loadContacts(true);
         loadGroups();
-    }, [loadContacts, loadGroups]);
+    }, [loadContacts, loadGroups]); // Only once on mount or when groups load
+
+    // Handle search/filter updates without full-page loading refresh
+    useEffect(() => {
+        // Only run if we're not in the initial loading state
+        if (!loading) {
+            loadContacts(false);
+        }
+    }, [debouncedSearch, activeFilters, loadContacts, loading]);
 
     const handleAddContact = async (formData) => {
         try {
@@ -148,6 +172,15 @@ function Contacts() {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {isAdmin && (
+                        <button
+                            onClick={() => setShowImportModal(true)}
+                            className="btn-secondary flex items-center gap-2"
+                        >
+                            <Download size={18} />
+                            Import
+                        </button>
+                    )}
                     <button className="btn-secondary flex items-center gap-2">
                         <Download size={18} />
                         Export
@@ -170,7 +203,11 @@ function Contacts() {
             {/* Toolbar Area */}
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="relative flex-1 group">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                    {isFetching ? (
+                        <Loader2 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-500 animate-spin" size={20} />
+                    ) : (
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                    )}
                     <input
                         type="text"
                         placeholder="Search name or ID..."
@@ -253,6 +290,13 @@ function Contacts() {
                     </div>
                 </div>
             )}
+            {/* Import Modal */}
+            <ImportModal
+                isOpen={showImportModal}
+                onClose={() => setShowImportModal(false)}
+                onImportSuccess={loadContacts}
+                groups={groups}
+            />
         </div>
     );
 }

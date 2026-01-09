@@ -354,6 +354,55 @@ app.get('/api/contacts/:id', async (req, res) => {
     }
 });
 
+// Bulk Create Contacts (Admin only)
+app.post('/api/contacts/bulk', authMiddleware, roleCheck(['admin']), async (req, res) => {
+    const { contacts } = req.body;
+
+    if (!Array.isArray(contacts) || contacts.length === 0) {
+        return res.status(400).json({ error: 'At least one contact is required' });
+    }
+
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const insertedContacts = [];
+        for (const contact of contacts) {
+            const { name, email, phone, company, group_id } = contact;
+
+            if (!name || !email) {
+                throw new Error('Name and email are required for all contacts');
+            }
+
+            const { rows } = await client.query(
+                `INSERT INTO contacts (name, email, phone, company, group_id) 
+                 VALUES ($1, $2, $3, $4, $5) 
+                 RETURNING *`,
+                [name, email, phone, company, group_id]
+            );
+
+            // Log activity for each contact (summarized in the logs)
+            await client.query(
+                `INSERT INTO activity_logs (action, actor, details) 
+                 VALUES ($1, $2, $3)`,
+                ['CREATE_CONTACT', req.user.id, JSON.stringify({ name, email, source: 'bulk_import' })]
+            );
+
+            insertedContacts.push(rows[0]);
+        }
+
+        await client.query('COMMIT');
+        res.status(201).json(insertedContacts);
+    } catch (error) {
+        if (client) await client.query('ROLLBACK');
+        console.error('Error in bulk import:', error);
+        res.status(500).json({ error: error.message || 'Failed to import contacts' });
+    } finally {
+        if (client) client.release();
+    }
+});
+
 // POST create contact (PROTECTED - Admin only)
 app.post('/api/contacts', authMiddleware, roleCheck(['admin']), async (req, res) => {
     try {
