@@ -34,6 +34,34 @@
     font-family: 'Outfit', sans-serif;
     @apply font-bold tracking-tight;
   }
+
+  @media print {
+
+    nav,
+    aside,
+    footer,
+    .btn-primary,
+    .btn-secondary,
+    .print\:hidden {
+      display: none !important;
+    }
+
+    .md\:pl-64 {
+      padding-left: 0 !important;
+    }
+
+    body,
+    html {
+      background: white !important;
+      color: black !important;
+    }
+
+    .premium-card {
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: none !important;
+      break-inside: avoid;
+    }
+  }
 }
 
 @layer components {
