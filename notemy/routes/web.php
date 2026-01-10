@@ -59,4 +59,9 @@ Route::get('/debug-db', function () {
     return response()->json($report);
 });
 
+Route::get('/fix-migration', function () {
+    \Illuminate\Support\Facades\Artisan::call('app:migrate-legacy-data');
+    return 'Legacy Migration Triggered! Output: ' . \Illuminate\Support\Facades\Artisan::output();
+});
+
 require __DIR__ . '/auth.php';
