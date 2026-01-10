@@ -9,6 +9,9 @@ Route::get('/', [\App\Http\Controllers\ContactController::class, 'index'])->name
 Route::get('/contacts', [\App\Http\Controllers\ContactController::class, 'index'])->name('contacts.index');
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
+// Public route for contact requests (with rate limiting)
+Route::post('/contact-requests', [\App\Http\Controllers\ContactRequestController::class, 'store'])->name('contact-requests.store');
+
 Route::middleware('auth')->group(function () {
     Route::post('/contacts', [\App\Http\Controllers\ContactController::class, 'store'])->name('contacts.store');
     Route::put('/contacts/{id}', [\App\Http\Controllers\ContactController::class, 'update'])->name('contacts.update');

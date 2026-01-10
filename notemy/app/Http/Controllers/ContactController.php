@@ -6,14 +6,26 @@ use Illuminate\Http\Request;
 
 use App\Models\Contact;
 use App\Models\Group;
+use App\Helpers\ObfuscateHelper;
 use Inertia\Inertia;
 
 class ContactController extends Controller
 {
     public function index()
     {
+        $contacts = Contact::with('groups')->latest()->get();
+
+        // Obfuscate sensitive data for non-admin users
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            $contacts = $contacts->map(function ($contact) {
+                $contact->email = ObfuscateHelper::email($contact->email);
+                $contact->phone = ObfuscateHelper::phone($contact->phone);
+                return $contact;
+            });
+        }
+
         return Inertia::render('Contacts/Index', [
-            'contacts' => Contact::with('groups')->latest()->get(),
+            'contacts' => $contacts,
             'groups' => Group::all(),
         ]);
     }
