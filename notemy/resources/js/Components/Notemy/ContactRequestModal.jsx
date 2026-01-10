@@ -22,11 +22,21 @@ export default function ContactRequestModal({ contact, onClose }) {
                 onClose();
             },
             onError: (errors) => {
+                console.error('Submission errors:', errors);
+
+                // Handle validation errors
                 if (errors.message) {
                     toast.error(errors.message);
+                } else if (errors.contact_id) {
+                    toast.error('Kontak tidak valid. Silakan refresh halaman.');
                 } else {
-                    toast.error('Gagal mengirim permintaan. Silakan coba lagi.');
+                    // Generic error
+                    const errorMessage = Object.values(errors)[0];
+                    toast.error(errorMessage || 'Gagal mengirim permintaan. Silakan coba lagi.');
                 }
+                setIsSubmitting(false);
+            },
+            onFinish: () => {
                 setIsSubmitting(false);
             }
         });

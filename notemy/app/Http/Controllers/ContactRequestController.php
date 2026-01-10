@@ -10,28 +10,37 @@ class ContactRequestController extends Controller
 {
     public function store(Request $request)
     {
-        // Rate limiting: 5 requests per day per IP
-        $key = 'contact-request:' . $request->ip();
+        try {
+            // Rate limiting: 5 requests per day per IP
+            $key = 'contact-request:' . $request->ip();
 
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            return back()->with('error', 'Anda telah mencapai batas maksimal permintaan hari ini (5 permintaan). Silakan coba lagi besok.');
+            if (RateLimiter::tooManyAttempts($key, 5)) {
+                return back()->withErrors([
+                    'message' => 'Anda telah mencapai batas maksimal permintaan hari ini (5 permintaan). Silakan coba lagi besok.'
+                ]);
+            }
+
+            $validated = $request->validate([
+                'contact_id' => 'required|string|exists:contacts,id',
+                'requester_name' => 'required|string|max:255',
+                'requester_email' => 'required|email|max:255',
+                'message' => 'nullable|string|max:1000',
+            ]);
+
+            $validated['ip_address'] = $request->ip();
+            $validated['status'] = 'pending';
+
+            ContactRequest::create($validated);
+
+            // Increment rate limiter (expires in 24 hours)
+            RateLimiter::hit($key, 86400);
+
+            return back()->with('success', 'Permintaan Anda telah dikirim. Admin akan meninjau dan menghubungi Anda via email.');
+        } catch (\Exception $e) {
+            \Log::error('Contact Request Error: ' . $e->getMessage());
+            return back()->withErrors([
+                'message' => 'Terjadi kesalahan saat mengirim permintaan. Silakan coba lagi.'
+            ]);
         }
-
-        $validated = $request->validate([
-            'contact_id' => 'required|exists:contacts,id',
-            'requester_name' => 'required|string|max:255',
-            'requester_email' => 'required|email|max:255',
-            'message' => 'nullable|string|max:1000',
-        ]);
-
-        $validated['ip_address'] = $request->ip();
-        $validated['status'] = 'pending';
-
-        ContactRequest::create($validated);
-
-        // Increment rate limiter (expires in 24 hours)
-        RateLimiter::hit($key, 86400);
-
-        return back()->with('success', 'Permintaan Anda telah dikirim. Admin akan meninjau dan menghubungi Anda via email.');
     }
 }
