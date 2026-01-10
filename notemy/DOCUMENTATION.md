@@ -73,8 +73,34 @@ notemy/
 │   ├── web.php               # Routing utama & Grouping Auth
 │   └── auth.php              # Routing login/register (Laravel Breeze)
 ├── Dockerfile                # Instruksi build server Render
-└── entrypoint.sh             # Script inisialisasi server (Migration & Cache)
+├── entrypoint.sh             # Script inisialisasi server (Migration & Cache)
+└── PROMPT_GUIDE.md           # Panduan prompt AI untuk replikasi proyek
 ```
+
+---
+
+## 🔐 Advanced Security & Authentication
+
+### 1. Google OAuth (Zero-Password Login) 🌐
+
+* **Integration**: Menggunakan `laravel/socialite` untuk autentikasi Google.
+* **One-Click Experience**: Admin cukup klik "Masuk dengan Google" tanpa perlu mengingat password tambahan.
+
+### 2. Strict Whitelisting Logic (Anti-Penyusup) 🛡️
+>
+> [!IMPORTANT]
+> **Kenapa Tidak Ada Public Sign-Up?**
+> Notemy didesain untuk kolaborasi tim internal. Karena database kontak bersifat satu kesatuan (shared database), mengizinkan orang asing mendaftar secara bebas adalah risiko besar bagi integritas data.
+>
+> **Sistem Kerja Whitelist:**
+>
+> * Hanya user yang emailnya **SUDAH TERDAFTAR** di sistem oleh Super Admin yang bisa masuk via Google.
+> * Orang asing yang mencoba login pakai Google akan langsung ditolak: *"Email tidak terdaftar dalam whitelist."*
+
+### 3. Multi-Admin Role Management 👔
+
+* **Delegasi Tugas**: Super Admin dapat menambahkan anggota tim lain sebagai member dengan role `admin`.
+* **Filament User Resource**: Manajemen admin dilakukan secara visual melalui panel God Admin (`/admin`).
 
 ---
 
@@ -83,9 +109,9 @@ notemy/
 ### Backend (The Brain) 🧠
 
 * **Framework**: [Laravel 11](https://laravel.com)
+* **Auth Engine**: Laravel Breeze + [Laravel Socialite](https://laravel.com/docs/11.x/socialite)
 * **Admin Panel**: [Filament PHP 3](https://filamentphp.com)
 * **Database**: PostgreSQL (via [Neon Tech](https://neon.tech))
-* **Security**: Laravel Breeze, Spatie Permissions.
 
 ### Frontend (The Face) 💅
 
@@ -116,13 +142,16 @@ Jika ingin menjalankan proyek ini secara lokal:
 
 ---
 
-## 🚀 Deployment Access
+## 🚀 Deployment & Admin Access
 
-* **Live URL**: `https://keeply-i2wa.onrender.com`
-* **Access Levels**:
-  * **Guest**: View Contacts Only (Homepage).
-  * **Admin**: Akun administrator utama untuk manajemen konten. (Login: `admin@notemy.app` / Password silakan diubah via Profile).
+* **Live URL**: [https://keeply-i2wa.onrender.com](https://keeply-i2wa.onrender.com)
+* **God Admin Panel**: `/admin` (Hanya untuk Boss/Super Admin).
+* **Cara Menambah Admin Baru**:
+    1. Masuk ke `/admin` -> Menu **Manajemen User**.
+    2. Tambahkan email Google admin baru, set role ke `admin`.
+    3. Pilih password asal (tidak akan terpakai karena mereka pakai Google).
+    4. Save. Admin baru sekarang bisa login via tombol Google di halaman depan.
 
 ---
 
-> *"Notemy membuktikan bahwa aplikasi korporat tidak harus kaku dan membosankan. Ia bisa cepat, aman, dan tetap memanjakan mata."*
+> *"Notemy: Keamanan tingkat enterprise dalam balutan desain yang memanjakan mata."*
