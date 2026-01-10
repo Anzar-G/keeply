@@ -52,7 +52,7 @@ export default function NotemyLayout({ children }) {
                             Analitik
                         </Link>
 
-                        {auth.user.role === 'admin' && (
+                        {auth.user?.role === 'admin' && (
                             <>
                                 <p className="px-4 text-[10px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mt-8 mb-4">Administration</p>
                                 <Link href={route('activities.index')} className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 ${route().current('activities.index') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'}`}>
@@ -100,25 +100,38 @@ export default function NotemyLayout({ children }) {
                             {theme === 'dark' ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-slate-600" />}
                         </button>
 
-                        <div className="relative">
-                            <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-slate-400 relative transition-colors">
-                                <Bell size={20} />
-                                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-                            </button>
-                        </div>
+                        {auth.user ? (
+                            <>
+                                <div className="relative">
+                                    <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-slate-400 relative transition-colors">
+                                        <Bell size={20} />
+                                        <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+                                    </button>
+                                </div>
 
-                        <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-slate-800">
-                            <div className="text-right hidden md:block">
-                                <p className="text-sm font-bold text-gray-900 dark:text-slate-100">{auth.user.name}</p>
-                                <p className="text-xs text-gray-500 dark:text-slate-500 capitalize">{auth.user.role || 'User'}</p>
+                                <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-slate-800">
+                                    <div className="text-right hidden md:block">
+                                        <p className="text-sm font-bold text-gray-900 dark:text-slate-100">{auth.user.name}</p>
+                                        <p className="text-xs text-gray-500 dark:text-slate-500 capitalize">{auth.user.role || 'User'}</p>
+                                    </div>
+                                    <div className="w-9 h-9 bg-indigo-100 dark:bg-slate-800 rounded-full flex items-center justify-center border border-indigo-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                                        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${auth.user.name}`} alt="User" />
+                                    </div>
+                                    <Link href={route('logout')} method="post" as="button" className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg text-gray-400 hover:text-red-600 transition-colors">
+                                        <LogOut size={18} />
+                                    </Link>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-slate-800">
+                                <Link href={route('login')} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-lg shadow-indigo-500/20">
+                                    Log In
+                                </Link>
+                                <Link href={route('register')} className="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-bold rounded-xl transition-colors">
+                                    Register
+                                </Link>
                             </div>
-                            <div className="w-9 h-9 bg-indigo-100 dark:bg-slate-800 rounded-full flex items-center justify-center border border-indigo-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${auth.user.name}`} alt="User" />
-                            </div>
-                            <Link href={route('logout')} method="post" as="button" className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg text-gray-400 hover:text-red-600 transition-colors">
-                                <LogOut size={18} />
-                            </Link>
-                        </div>
+                        )}
                     </div>
                 </nav>
 

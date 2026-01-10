@@ -22,7 +22,7 @@ export default function Index({ contacts: initialContacts, groups }) {
         dateTo: ''
     });
 
-    const isAdmin = auth.user.role === 'admin';
+    const isAdmin = auth.user?.role === 'admin';
 
     const handleRefresh = () => {
         router.reload({
