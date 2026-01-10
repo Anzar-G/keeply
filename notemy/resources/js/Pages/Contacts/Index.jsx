@@ -9,7 +9,7 @@ import { Plus, Filter, Download, RefreshCw, FileText } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function Index({ contacts: initialContacts, groups }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const [contacts, setContacts] = useState(initialContacts);
     const [showForm, setShowForm] = useState(false);
     const [editingContact, setEditingContact] = useState(null);
@@ -26,6 +26,16 @@ export default function Index({ contacts: initialContacts, groups }) {
     });
 
     const isAdmin = auth.user?.role === 'admin';
+
+    // Handle flash messages
+    React.useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    }, [flash]);
 
     const handleRefresh = () => {
         router.reload({

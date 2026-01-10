@@ -46,7 +46,7 @@ class ContactRequestController extends Controller
             // Increment rate limiter (expires in 24 hours)
             RateLimiter::hit($key, 86400);
 
-            return back()->with('success', 'Permintaan Anda telah dikirim. Admin akan meninjau dan menghubungi Anda via email.');
+            return redirect()->route('contacts.index')->with('success', 'Permintaan Anda telah dikirim! Admin akan meninjau dan menghubungi Anda via email.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation Error in Contact Request', [
                 'errors' => $e->errors(),
