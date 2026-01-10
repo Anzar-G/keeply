@@ -70,7 +70,7 @@ export default function Index({ contacts: initialContacts, groups }) {
 
     return (
         <NotemyLayout>
-            <Head title="Registri Kontak" />
+            <Head title="Registri Kontak v2" />
             <Toaster position="top-right" />
 
             <div className="space-y-8 animate-in fade-in duration-700">
