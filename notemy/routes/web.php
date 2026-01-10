@@ -21,37 +21,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/fix-admin', function () {
-    $user = \App\Models\User::firstOrCreate(
-        ['email' => 'admin@notemy.app'],
-        [
-            'name' => 'Super Admin',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
-        ]
-    );
-    return 'Admin User Created/Verified. Login: admin@notemy.app / password';
-});
-
-Route::get('/debug-db', function () {
-    $report = [
-        'users_count' => \App\Models\User::count(),
-        'contacts_count' => \App\Models\Contact::count(),
-        'groups_count' => \App\Models\Group::count(),
-        'legacy_contacts_exists' => \Illuminate\Support\Facades\Schema::hasTable('legacy_contacts'),
-        'legacy_users_exists' => \Illuminate\Support\Facades\Schema::hasTable('legacy_users'),
-    ];
-
-    if ($report['legacy_contacts_exists']) {
-        $report['legacy_contacts_count'] = \Illuminate\Support\Facades\DB::table('legacy_contacts')->count();
-    }
-
-    return response()->json($report);
-});
-
-Route::get('/fix-migration', function () {
-    \Illuminate\Support\Facades\Artisan::call('app:migrate-legacy-data');
-    return 'Legacy Migration Triggered! Output: ' . \Illuminate\Support\Facades\Artisan::output();
-});
 
 require __DIR__ . '/auth.php';
