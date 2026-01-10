@@ -59,10 +59,12 @@ export default function NotemyLayout({ children }) {
                                     <History size={18} />
                                     Log Aktivitas
                                 </Link>
-                                <a href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200">
-                                    <Shield size={18} />
-                                    Super Admin Panel
-                                </a>
+                                {window.location.hostname === 'notemy.test' && (
+                                    <a href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200">
+                                        <Shield size={18} />
+                                        Super Admin Panel
+                                    </a>
+                                )}
                             </>
                         )}
                     </nav>
