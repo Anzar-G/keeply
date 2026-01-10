@@ -1,28 +1,23 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
+    /**
+     * Matikan transaksi untuk migrasi ini agar DDL tidak memblokir sesi pada Neon/Pgbouncer.
+     */
+    public $withinTransaction = false;
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        // Cek google_id secara terpisah
-        if (!Schema::hasColumn('users', 'google_id')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->string('google_id')->nullable()->unique()->after('email');
-            });
-        }
-
-        // Cek avatar_url secara terpisah
-        if (!Schema::hasColumn('users', 'avatar_url')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->string('avatar_url')->nullable()->after('role');
-            });
-        }
+        // Gunakan Raw SQL IF NOT EXISTS agar ultra-robust
+        DB::statement('ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255)');
+        DB::statement('CREATE UNIQUE INDEX IF NOT EXISTS users_google_id_unique ON users (google_id)');
+        DB::statement('ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(255)');
     }
 
     /**
@@ -30,13 +25,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'google_id')) {
-                $table->dropColumn('google_id');
-            }
-            if (Schema::hasColumn('users', 'avatar_url')) {
-                $table->dropColumn('avatar_url');
-            }
-        });
+        DB::statement('ALTER TABLE users DROP COLUMN IF EXISTS google_id');
+        DB::statement('ALTER TABLE users DROP COLUMN IF EXISTS avatar_url');
     }
 };

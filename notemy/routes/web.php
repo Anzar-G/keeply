@@ -16,15 +16,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/activities', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activities.index');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::get('/debug-schema', function () {
-        return response()->json([
-            'users_columns' => \Illuminate\Support\Facades\Schema::getColumnListing('users'),
-        ]);
-    });
+    Route::delete('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 });
 
 
