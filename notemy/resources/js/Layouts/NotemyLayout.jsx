@@ -80,13 +80,15 @@ export default function NotemyLayout({ children }) {
                             <Settings size={18} />
                             Pengaturan (Soon)
                         </button>
-                        <div className="mt-6 p-4 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white relative overflow-hidden group border border-white/5">
-                            <div className="relative z-10">
-                                <p className="text-xs font-bold opacity-80 mb-1">Support Plan</p>
-                                <p className="text-sm font-extrabold">Enterprise Plus</p>
+                        {auth.user && (
+                            <div className="mt-6 p-4 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white relative overflow-hidden group border border-white/5">
+                                <div className="relative z-10">
+                                    <p className="text-xs font-bold opacity-80 mb-1">Support Plan</p>
+                                    <p className="text-sm font-extrabold">Enterprise Plus</p>
+                                </div>
+                                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-16 h-16 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
                             </div>
-                            <div className="absolute top-0 right-0 -mr-4 -mt-4 w-16 h-16 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </aside>
