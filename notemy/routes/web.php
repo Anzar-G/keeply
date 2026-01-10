@@ -43,4 +43,20 @@ Route::get('/fix-admin', function () {
     return 'Admin User Created/Verified. Login: admin@notemy.app / password';
 });
 
+Route::get('/debug-db', function () {
+    $report = [
+        'users_count' => \App\Models\User::count(),
+        'contacts_count' => \App\Models\Contact::count(),
+        'groups_count' => \App\Models\Group::count(),
+        'legacy_contacts_exists' => \Illuminate\Support\Facades\Schema::hasTable('legacy_contacts'),
+        'legacy_users_exists' => \Illuminate\Support\Facades\Schema::hasTable('legacy_users'),
+    ];
+
+    if ($report['legacy_contacts_exists']) {
+        $report['legacy_contacts_count'] = \Illuminate\Support\Facades\DB::table('legacy_contacts')->count();
+    }
+
+    return response()->json($report);
+});
+
 require __DIR__ . '/auth.php';
