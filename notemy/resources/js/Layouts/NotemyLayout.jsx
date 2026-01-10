@@ -129,9 +129,6 @@ export default function NotemyLayout({ children }) {
                                 <Link href={route('login')} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-lg shadow-indigo-500/20">
                                     Log In
                                 </Link>
-                                <Link href={route('register')} className="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-bold rounded-xl transition-colors">
-                                    Register
-                                </Link>
                             </div>
                         )}
                     </div>
