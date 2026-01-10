@@ -30,6 +30,9 @@ class AdminPanelProvider extends PanelProvider
                 'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->resources([
+                \App\Filament\Admin\Resources\ContactRequestResource::class,
+            ])
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
