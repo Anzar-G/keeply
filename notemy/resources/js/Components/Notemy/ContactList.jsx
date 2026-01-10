@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
-import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone, FolderPlus, ChevronUp } from 'lucide-react';
+import { UserPlus, Download, Trash2, X, Edit2, User, Mail, Building2, Phone, FolderPlus, ChevronUp, Lock } from 'lucide-react';
 
 export default function ContactList({ contacts, onEdit, onDelete, onBulkDelete, isAdmin, groups }) {
     const [selectedIds, setSelectedIds] = useState([]);
@@ -170,7 +170,17 @@ export default function ContactList({ contacts, onEdit, onDelete, onBulkDelete, 
                                     </td>
                                     <td className="p-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            {onEdit && (
+                                            {!isAdmin && (
+                                                <button
+                                                    onClick={() => onEdit(contact)}
+                                                    className="px-3 py-2 flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl transition-all border border-indigo-200 dark:border-indigo-500/20"
+                                                    title="Minta akses detail kontak"
+                                                >
+                                                    <Lock size={14} />
+                                                    Minta Detail
+                                                </button>
+                                            )}
+                                            {onEdit && isAdmin && (
                                                 <button
                                                     onClick={() => onEdit(contact)}
                                                     className="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-600 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md dark:hover:shadow-indigo-500/10 rounded-xl transition-all"
@@ -179,7 +189,7 @@ export default function ContactList({ contacts, onEdit, onDelete, onBulkDelete, 
                                                     <Edit2 size={16} />
                                                 </button>
                                             )}
-                                            {onDelete && (
+                                            {onDelete && isAdmin && (
                                                 <button
                                                     onClick={() => onDelete(contact.id)}
                                                     className="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md dark:hover:shadow-rose-500/10 rounded-xl transition-all"

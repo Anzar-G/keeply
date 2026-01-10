@@ -4,6 +4,7 @@ import NotemyLayout from '@/Layouts/NotemyLayout';
 import ContactList from '@/Components/Notemy/ContactList';
 import ContactForm from '@/Components/Notemy/ContactForm';
 import FilterSidebar from '@/Components/Notemy/FilterSidebar';
+import ContactRequestModal from '@/Components/Notemy/ContactRequestModal';
 import { Plus, Filter, Download, RefreshCw, FileText } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -14,6 +15,8 @@ export default function Index({ contacts: initialContacts, groups }) {
     const [editingContact, setEditingContact] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+    const [showRequestModal, setShowRequestModal] = useState(false);
+    const [requestingContact, setRequestingContact] = useState(null);
     const [activeFilters, setActiveFilters] = useState({
         group: '',
         company: '',
@@ -66,6 +69,11 @@ export default function Index({ contacts: initialContacts, groups }) {
                 onSuccess: () => toast.success('Kontak berhasil dihapus'),
             });
         }
+    };
+
+    const handleRequestInfo = (contact) => {
+        setRequestingContact(contact);
+        setShowRequestModal(true);
     };
 
     return (
@@ -152,7 +160,7 @@ export default function Index({ contacts: initialContacts, groups }) {
                         onEdit={isAdmin ? (contact) => {
                             setEditingContact(contact);
                             setShowForm(true);
-                        } : null}
+                        } : handleRequestInfo}
                         onDelete={isAdmin ? handleDeleteContact : null}
                     />
                 </div>
@@ -184,6 +192,17 @@ export default function Index({ contacts: initialContacts, groups }) {
                             </div>
                         </div>
                     </div>
+                )}
+
+                {/* Contact Request Modal for Guests */}
+                {showRequestModal && requestingContact && (
+                    <ContactRequestModal
+                        contact={requestingContact}
+                        onClose={() => {
+                            setShowRequestModal(false);
+                            setRequestingContact(null);
+                        }}
+                    />
                 )}
             </div>
         </NotemyLayout>
