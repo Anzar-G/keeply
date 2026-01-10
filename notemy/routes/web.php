@@ -31,4 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/fix-admin', function () {
+    $user = \App\Models\User::firstOrCreate(
+        ['email' => 'admin@notemy.app'],
+        [
+            'name' => 'Super Admin',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]
+    );
+    return 'Admin User Created/Verified. Login: admin@notemy.app / password';
+});
+
 require __DIR__ . '/auth.php';
