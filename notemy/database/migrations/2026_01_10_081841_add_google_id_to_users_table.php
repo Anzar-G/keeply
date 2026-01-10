@@ -10,14 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'google_id')) {
+        // Cek google_id secara terpisah
+        if (!Schema::hasColumn('users', 'google_id')) {
+            Schema::table('users', function (Blueprint $table) {
                 $table->string('google_id')->nullable()->unique()->after('email');
-            }
-            if (!Schema::hasColumn('users', 'avatar_url')) {
+            });
+        }
+
+        // Cek avatar_url secara terpisah
+        if (!Schema::hasColumn('users', 'avatar_url')) {
+            Schema::table('users', function (Blueprint $table) {
                 $table->string('avatar_url')->nullable()->after('role');
-            }
-        });
+            });
+        }
     }
 
     /**
