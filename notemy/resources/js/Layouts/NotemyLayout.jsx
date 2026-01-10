@@ -70,13 +70,15 @@ export default function NotemyLayout({ children }) {
                     </nav>
 
                     <div className="mt-auto border-t border-slate-50 dark:border-slate-800/50 pt-8 space-y-2">
-                        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left">
-                            <UserCircle size={18} />
-                            Profil
-                        </button>
-                        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left">
+                        {auth.user && (
+                            <Link href={route('profile.edit')} className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 text-left ${route().current('profile.edit') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'}`}>
+                                <UserCircle size={18} />
+                                Profil & Keamanan
+                            </Link>
+                        )}
+                        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 text-left cursor-not-allowed opacity-50">
                             <Settings size={18} />
-                            Pengaturan
+                            Pengaturan (Soon)
                         </button>
                         <div className="mt-6 p-4 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white relative overflow-hidden group border border-white/5">
                             <div className="relative z-10">
