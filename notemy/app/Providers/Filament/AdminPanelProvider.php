@@ -52,6 +52,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->homeUrl('/')
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Kembali ke App')
+                    ->url('/')
+                    ->icon('heroicon-o-home')
+                    ->sort(-1),
             ]);
     }
 }
